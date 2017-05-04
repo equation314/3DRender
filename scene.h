@@ -12,26 +12,26 @@ class Collision;
 class Scene
 {
 public:
-	Scene();
-	~Scene();
+    Scene();
+    ~Scene();
 
-	Camera* getCamera() const { return m_camera; }
-	Color getBackgroundColor() const { return m_background_color; }
+    Camera* getCamera() const { return m_camera; }
+    Color getBackgroundColor() const { return m_background_color; }
 
-	std::vector<Light*>::const_iterator lightsBegin() const { return m_lights.begin(); }
-	std::vector<Light*>::const_iterator lightsEnd() const { return m_lights.end(); }
-	std::vector<Object*>::const_iterator objectsBegin() const { return m_objects.begin(); }
-	std::vector<Object*>::const_iterator objectsEnd() const { return m_objects.end(); }
+    std::vector<Light*>::const_iterator lightsBegin() const { return m_lights.begin(); }
+    std::vector<Light*>::const_iterator lightsEnd() const { return m_lights.end(); }
+    std::vector<Object*>::const_iterator objectsBegin() const { return m_objects.begin(); }
+    std::vector<Object*>::const_iterator objectsEnd() const { return m_objects.end(); }
 
-	// 寻找视线最先碰到的物体或光源
-	Collision findNearestCollision(const Vector3& start, const Vector3& dir) const;
+    // 寻找视线最先碰到的物体或光源
+    Collision findNearestCollision(const Vector3& start, const Vector3& dir) const;
 
 private:
-	Camera* m_camera;
-	Color m_background_color;
+    Camera* m_camera;
+    Color m_background_color;
 
-	std::vector<Light*> m_lights;
-	std::vector<Object*> m_objects;
+    std::vector<Light*> m_lights;
+    std::vector<Object*> m_objects;
 };
 
 #endif // SCENE_H

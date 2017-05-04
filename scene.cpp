@@ -1,4 +1,3 @@
-#include "scene.h"
 #include "collision.h"
 #include "common/const.h"
 #include "light/light.h"
@@ -6,11 +5,12 @@
 #include "object/object.h"
 #include "object/plane.h"
 #include "object/sphere.h"
+#include "scene.h"
 
 #include <algorithm>
 
-Scene::Scene():
-    m_camera(new Camera()), m_background_color(Color(0.2, 0.2, 0.2))
+Scene::Scene()
+    : m_camera(new Camera()), m_background_color(Color(0.2, 0.2, 0.2))
 {
     m_lights.push_back(new PointLight(Color(1, 1, 1), Vector3(0, 0, 0)));
 
@@ -58,9 +58,8 @@ Scene::Scene():
     // m_objects.push_back(ball);
 
     // 反射光比例小的物体优先，其次折射光
-    sort(m_objects.begin(), m_objects.end(), [](Object* A, Object* B)
-    {
-        Material* a = A->getMaterial(), *b = B->getMaterial();
+    sort(m_objects.begin(), m_objects.end(), [](Object* A, Object* B) {
+        Material *a = A->getMaterial(), *b = B->getMaterial();
         return a->refl + EPS < b->refl || (abs(a->refl - b->refl) < EPS && a->refr + EPS < b->refr);
     });
 }
@@ -77,12 +76,12 @@ Scene::~Scene()
 Collision Scene::findNearestCollision(const Vector3& start, const Vector3& dir) const
 {
     Collision ret;
-    for (auto l: m_lights)
+    for (auto l : m_lights)
     {
         Collision coll = l->collide(start, dir);
         if (coll.isHit() && coll.dist + EPS < ret.dist) ret = coll;
     }
-    for (auto o: m_objects)
+    for (auto o : m_objects)
     {
         Collision coll = o->collide(start, dir);
         if (coll.isHit() && coll.dist + EPS < ret.dist) ret = coll;

@@ -10,6 +10,9 @@ using namespace std;
 const double EPS = 1e-6;
 const double PI = acos(-1.0);
 
-inline double randDouble() { return 1.0 * rand() / RAND_MAX; }
+inline double randDouble()
+{
+    return 1.0 * rand() / RAND_MAX;
+}
 
 #endif // CONST_H

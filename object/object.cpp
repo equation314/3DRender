@@ -2,10 +2,8 @@
 
 Object::Object()
 {
-
 }
 
 Object::~Object()
 {
-
 }
