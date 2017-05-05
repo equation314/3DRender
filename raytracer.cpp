@@ -6,7 +6,7 @@
 
 const double MIN_WEIGHT = 0.05;
 const int MAX_DEPTH = 10;
-const int SPEC_POWER = 30;
+const int SPEC_POWER = 50;
 
 void RayTracer::run(Scene* scene)
 {
@@ -31,12 +31,12 @@ Color RayTracer::m_calcLocalIllumination(const Collision& coll, const Material* 
     Color ret = material->color * m_scene->getAmbientLightColor() * material->diff; // 环境光
     for (auto light = m_scene->lightsBegin(); light != m_scene->lightsEnd(); light++)
     {
-        double shade = (*light)->getShadeRatio(m_scene, coll.p);
+        double shade = (*light)->getShadowRatio(m_scene, coll.p);
         if (shade < Const::EPS) continue;
 
         Vector3 l = ((*light)->getSource() - coll.p).unitize();
         if (material->diff > Const::EPS) // 漫反射
-            ret += material->color * (*light)->getColor() * (material->diff * l.dot(coll.n));
+            ret += material->color * (*light)->getColor() * (material->diff * l.dot(coll.n) * shade);
         if (material->spec > Const::EPS) // 镜面反射
             ret += material->color * (*light)->getColor() * (material->spec * pow(l.dot(r), SPEC_POWER));
     }
@@ -59,13 +59,12 @@ Color RayTracer::m_calcRefraction(const Collision& coll, const Material* materia
 
 Color RayTracer::m_rayTraceing(const Vector3& start, const Vector3& dir, double weight, int depth) const
 {
-    if (weight < MIN_WEIGHT) return Color();
+    if (weight < MIN_WEIGHT) return m_scene->getAmbientLightColor();
     Collision coll = m_scene->findNearestCollision(start, dir);
     if (!coll.isHit())
         return m_scene->getAmbientLightColor();
-    // TODO 视线遇到光源
-    // else if (coll.isLight())
-    // 	return coll.getLight()->getColor();
+    else if (coll.atLight())
+        return coll.light->getColor();
     else if (depth <= MAX_DEPTH)
     {
         Color ret;
@@ -81,4 +80,6 @@ Color RayTracer::m_rayTraceing(const Vector3& start, const Vector3& dir, double 
 
         return ret;
     }
+    else
+        return m_scene->getAmbientLightColor();
 }

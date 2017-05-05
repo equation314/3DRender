@@ -1,14 +1,14 @@
-#ifndef POINTLIGHT_H
-#define POINTLIGHT_H
+#ifndef RECTLIGHT_H
+#define RECTLIGHT_H
 
 #include "common/vector3.h"
 #include "light/light.h"
 
-class PointLight : public Light
+class RectLight : public Light
 {
 public:
-    PointLight(const Color& c, const Vector3& o)
-        : Light(c), m_o(o) {}
+    RectLight(const Color& c, const Vector3& o, const Vector3& dx, const Vector3& dy)
+        : Light(c), m_o(o), m_dx(dx), m_dy(dy) {}
 
     // 发光点
     virtual Vector3 getSource() const override { return m_o; }
@@ -20,7 +20,8 @@ public:
     virtual double getShadowRatio(const Scene* scene, const Vector3& p) const override;
 
 private:
-    Vector3 m_o;
+    Vector3 m_o;        // 矩形中心点
+    Vector3 m_dx, m_dy; // 横向、纵向向量
 };
 
-#endif // POINTLIGHT_H
+#endif // RECTLIGHT_H

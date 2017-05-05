@@ -22,8 +22,8 @@ public:
     // 与视线相交
     virtual Collision collide(const Vector3& start, const Vector3& dir) const = 0;
 
-    // 计算阴影比例
-    virtual double getShadeRatio(const Scene* scene, const Vector3& p) const = 0;
+    // 计算阴影比例，值越小阴影越深
+    virtual double getShadowRatio(const Scene* scene, const Vector3& p) const = 0;
 
 protected:
     Color m_color;

@@ -2,6 +2,7 @@
 #include "common/const.h"
 #include "light/light.h"
 #include "light/pointlight.h"
+#include "light/rectlight.h"
 #include "object/object.h"
 #include "object/plane.h"
 #include "object/sphere.h"
@@ -12,12 +13,13 @@
 Scene::Scene()
     : m_camera(new Camera()), m_ambient_color(Color(0.2, 0.2, 0.2))
 {
-    m_lights.push_back(new PointLight(Color(0.8, 0.8, 0.8), Vector3(-0.5, 0, 0.9)));
+    m_lights.push_back(new RectLight(Color(1, 1, 1), Vector3(0, 0, 0.9), Vector3(0.2, 0, 0), Vector3(0, 0.2, 0)));
+    // m_lights.push_back(new PointLight(Color(1, 1, 1), Vector3(0, 0, 0.9)));
 
     Material* groundMaterial = new Material(Color(0.4, 0.4, 0.4), 0.8, 0, 0, 0);
     Material* wallMaterial = new Material(Color(1, 1, 1), 0.9, 0.1, 0, 0);
-    Material* ballMaterial = new Material(Color(1.0, 0.2, 0.2), 0.4, 0.99, 0.6, 0);
-    Material* mirrorMaterial = new Material(Color(0.9, 0.9, 0.9), 0.1, 0.9, 0.9, 0);
+    Material* ballMaterial = new Material(Color(1.0, 0.2, 0.2), 0.4, 0.9, 0.6, 0);
+    Material* mirrorMaterial = new Material(Color(0.9, 0.9, 0.9), 0.1, 0.8, 0.9, 0);
 
     Object* ground = new Plane(wallMaterial, Vector3(0, 0, 1), 1);
     Object* ceiling = new Plane(wallMaterial, Vector3(0, 0, -1), 1);
