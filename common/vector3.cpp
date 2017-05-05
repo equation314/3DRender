@@ -21,6 +21,11 @@ std::ostream& operator<<(std::ostream& out, const Vector3& v)
     return out << '(' << v.x << ' ' << v.y << ' ' << v.z << ')';
 }
 
+Vector3 Vector3::operator-() const
+{
+    return Vector3(-x, -y, -z);
+}
+
 Vector3 Vector3::operator*(double k) const
 {
     return Vector3(x * k, y * k, z * k);

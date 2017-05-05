@@ -4,6 +4,7 @@
 #include "collision.h"
 #include "common/color.h"
 
+class Scene;
 class PointLight;
 
 class Light
@@ -20,6 +21,9 @@ public:
 
     // 与视线相交
     virtual Collision collide(const Vector3& start, const Vector3& dir) const = 0;
+
+    // 计算阴影比例
+    virtual double getShadeRatio(const Scene* scene, const Vector3& p) const = 0;
 
 protected:
     Color m_color;

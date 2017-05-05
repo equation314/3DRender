@@ -16,7 +16,7 @@ public:
     ~Scene();
 
     Camera* getCamera() const { return m_camera; }
-    Color getBackgroundColor() const { return m_background_color; }
+    Color getAmbientLightColor() const { return m_ambient_color; }
 
     std::vector<Light*>::const_iterator lightsBegin() const { return m_lights.begin(); }
     std::vector<Light*>::const_iterator lightsEnd() const { return m_lights.end(); }
@@ -27,8 +27,8 @@ public:
     Collision findNearestCollision(const Vector3& start, const Vector3& dir) const;
 
 private:
-    Camera* m_camera;
-    Color m_background_color;
+    Camera* m_camera;      // 相机
+    Color m_ambient_color; // 环境光
 
     std::vector<Light*> m_lights;
     std::vector<Object*> m_objects;

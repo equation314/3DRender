@@ -5,8 +5,8 @@
 #include "raytracer.h"
 
 const double MIN_WEIGHT = 0.05;
-const int MAX_DEPTH = 2;
-const int SPEC_POWER = 50;
+const int MAX_DEPTH = 10;
+const int SPEC_POWER = 30;
 
 void RayTracer::run(Scene* scene)
 {
@@ -28,10 +28,13 @@ void RayTracer::run(Scene* scene)
 Color RayTracer::m_calcLocalIllumination(const Collision& coll, const Material* material) const
 {
     Vector3 r = coll.ray_dir.reflect(coll.n);
-    Color ret = material->color * m_scene->getBackgroundColor() * material->diff; // 环境光
+    Color ret = material->color * m_scene->getAmbientLightColor() * material->diff; // 环境光
     for (auto light = m_scene->lightsBegin(); light != m_scene->lightsEnd(); light++)
     {
-        Vector3 l = ((*light)->getSource() - coll.o).unitize();
+        double shade = (*light)->getShadeRatio(m_scene, coll.p);
+        if (shade < Const::EPS) continue;
+
+        Vector3 l = ((*light)->getSource() - coll.p).unitize();
         if (material->diff > Const::EPS) // 漫反射
             ret += material->color * (*light)->getColor() * (material->diff * l.dot(coll.n));
         if (material->spec > Const::EPS) // 镜面反射
@@ -43,14 +46,14 @@ Color RayTracer::m_calcLocalIllumination(const Collision& coll, const Material* 
 Color RayTracer::m_calcReflection(const Collision& coll, const Material* material, double weight, int depth) const
 {
     Vector3 r = coll.ray_dir.reflect(coll.n);
-    Color ret = m_rayTraceing(coll.o, r, weight * material->refl, depth + 1);
+    Color ret = m_rayTraceing(coll.p, r, weight * material->refl, depth + 1);
     return ret * material->color * material->refl;
 }
 
 Color RayTracer::m_calcRefraction(const Collision& coll, const Material* material, double weight, int depth) const
 {
     Vector3 r = coll.ray_dir.refract(coll.n, material->rindex);
-    Color ret = m_rayTraceing(coll.o, r, weight * material->refr, depth + 1);
+    Color ret = m_rayTraceing(coll.p, r, weight * material->refr, depth + 1);
     return ret * material->color * material->refr;
 }
 
@@ -59,7 +62,7 @@ Color RayTracer::m_rayTraceing(const Vector3& start, const Vector3& dir, double 
     if (weight < MIN_WEIGHT) return Color();
     Collision coll = m_scene->findNearestCollision(start, dir);
     if (!coll.isHit())
-        return m_scene->getBackgroundColor();
+        return m_scene->getAmbientLightColor();
     // TODO 视线遇到光源
     // else if (coll.isLight())
     // 	return coll.getLight()->getColor();

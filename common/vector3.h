@@ -15,6 +15,7 @@ public:
     friend Vector3 operator-(const Vector3& A, const Vector3& B);
     friend Vector3 operator*(const Vector3& A, const Vector3& B);
     friend std::ostream& operator<<(std::ostream& out, const Vector3& v);
+    Vector3 operator-() const;
     Vector3 operator*(double k) const;
     Vector3 operator/(double k) const;
     double dot(const Vector3& B) const;
