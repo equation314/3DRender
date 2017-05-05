@@ -10,17 +10,17 @@ class Sphere;
 class Object
 {
 public:
-    Object();
-    virtual ~Object();
+    Object(const Material* m)
+        : m_material(m) {}
+    virtual ~Object() {}
 
-    Material* getMaterial() const { return m_material; }
-    void setMaterial(Material* m) { m_material = m; }
+    const Material* getMaterial() const { return m_material; }
 
     // 与视线相交
     virtual Collision collide(const Vector3& start, const Vector3& dir) const = 0;
 
 protected:
-    Material* m_material;
+    const Material* m_material;
 };
 
 #endif // OBJECT_H

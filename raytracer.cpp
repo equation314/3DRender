@@ -25,29 +25,29 @@ void RayTracer::run(Scene* scene)
     camera->print("output.bmp");
 }
 
-Color RayTracer::m_calcLocalIllumination(const Collision& coll, Material* material) const
+Color RayTracer::m_calcLocalIllumination(const Collision& coll, const Material* material) const
 {
     Vector3 r = coll.ray_dir.reflect(coll.n);
     Color ret = material->color * m_scene->getBackgroundColor() * material->diff; // 环境光
     for (auto light = m_scene->lightsBegin(); light != m_scene->lightsEnd(); light++)
     {
         Vector3 l = ((*light)->getSource() - coll.o).unitize();
-        if (material->diff > EPS) // 漫反射
+        if (material->diff > Const::EPS) // 漫反射
             ret += material->color * (*light)->getColor() * (material->diff * l.dot(coll.n));
-        if (material->spec > EPS) // 镜面反射
+        if (material->spec > Const::EPS) // 镜面反射
             ret += material->color * (*light)->getColor() * (material->spec * pow(l.dot(r), SPEC_POWER));
     }
     return ret;
 }
 
-Color RayTracer::m_calcReflection(const Collision& coll, Material* material, double weight, int depth) const
+Color RayTracer::m_calcReflection(const Collision& coll, const Material* material, double weight, int depth) const
 {
     Vector3 r = coll.ray_dir.reflect(coll.n);
     Color ret = m_rayTraceing(coll.o, r, weight * material->refl, depth + 1);
     return ret * material->color * material->refl;
 }
 
-Color RayTracer::m_calcRefraction(const Collision& coll, Material* material, double weight, int depth) const
+Color RayTracer::m_calcRefraction(const Collision& coll, const Material* material, double weight, int depth) const
 {
     Vector3 r = coll.ray_dir.refract(coll.n, material->rindex);
     Color ret = m_rayTraceing(coll.o, r, weight * material->refr, depth + 1);
@@ -67,9 +67,12 @@ Color RayTracer::m_rayTraceing(const Vector3& start, const Vector3& dir, double 
     {
         Color ret;
         const Object* obj = coll.object;
-        if (obj->getMaterial()->diff > EPS || obj->getMaterial()->spec > EPS) ret += m_calcLocalIllumination(coll, obj->getMaterial());
-        if (obj->getMaterial()->refl > EPS) ret += m_calcReflection(coll, obj->getMaterial(), weight, depth);
-        if (obj->getMaterial()->refr > EPS) ret += m_calcRefraction(coll, obj->getMaterial(), weight, depth);
+        if (obj->getMaterial()->diff > Const::EPS || obj->getMaterial()->spec > Const::EPS)
+            ret += m_calcLocalIllumination(coll, obj->getMaterial());
+        if (obj->getMaterial()->refl > Const::EPS)
+            ret += m_calcReflection(coll, obj->getMaterial(), weight, depth);
+        if (obj->getMaterial()->refr > Const::EPS)
+            ret += m_calcRefraction(coll, obj->getMaterial(), weight, depth);
 
         ret = ret.confine();
 

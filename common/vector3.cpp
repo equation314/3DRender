@@ -49,7 +49,7 @@ double Vector3::mod2() const
 Vector3 Vector3::unitize() const
 {
     double m = mod();
-    return *(this) / (m < EPS ? 1 : m);
+    return *(this) / (m < Const::EPS ? 1 : m);
 }
 
 Vector3 Vector3::reflect(const Vector3& n) const

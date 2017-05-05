@@ -7,8 +7,8 @@
 class Plane : public Object
 {
 public:
-    Plane(const Vector3& n, double d)
-        : Object(), m_n(n.unitize()), m_d(d) {}
+    Plane(const Material* m, const Vector3& n, double d)
+        : Object(m), m_n(n.unitize()), m_d(d) {}
 
     virtual Collision collide(const Vector3& start, const Vector3& dir) const override;
 

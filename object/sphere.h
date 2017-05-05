@@ -7,8 +7,8 @@
 class Sphere : public Object
 {
 public:
-    Sphere(const Vector3& o, double r)
-        : Object(), m_o(o), m_r(r) {}
+    Sphere(const Material* m, const Vector3& o, double r)
+        : Object(m), m_o(o), m_r(r) {}
 
     virtual Collision collide(const Vector3& start, const Vector3& dir) const override;
 

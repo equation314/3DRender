@@ -1,4 +1,5 @@
 [Bb]uild/
+.vscode
 
 *.bmp
 *.png

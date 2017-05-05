@@ -14,53 +14,27 @@ Scene::Scene()
 {
     m_lights.push_back(new PointLight(Color(1, 1, 1), Vector3(0, 0, 0)));
 
-    Material* groundMaterial = new Material();
-    Material* ballMaterial = new Material();
-    Material* wallMaterial = new Material();
+    Material* groundMaterial = new Material(Color(0.8, 1, 1), 0, 0.8, 1.0, 0);
+    Material* ballMaterial = new Material(Color(1.0, 0, 0), 0.8, 0.8, 0, 0);
+    Material* wallMaterial = new Material(Color(1, 1, 1), 0.8, 0, 0, 0);
 
-    groundMaterial->color = Color(0.8, 1, 1);
-    groundMaterial->diff = 0;
-    groundMaterial->spec = 0.8;
-    groundMaterial->refl = 1.0;
-    groundMaterial->refr = 0;
-
-    ballMaterial->color = Color(1.0, 0, 0);
-    ballMaterial->diff = 1.0;
-    ballMaterial->spec = 1.0;
-    ballMaterial->refl = 0;
-    ballMaterial->refr = 0;
-
-    wallMaterial->color = Color(1, 1, 1);
-    wallMaterial->diff = 0.8;
-    wallMaterial->spec = 0;
-    wallMaterial->refl = 0;
-    wallMaterial->refr = 0;
-
-    Object* ground = new Plane(Vector3(0, 0, 1), 1);
-    Object* ceiling = new Plane(Vector3(0, 0, -1), 1);
-    Object* wall1 = new Plane(Vector3(0, -1, 0), 1);
-    Object* wall2 = new Plane(Vector3(-1, 0, 0), 1);
-    Object* wall3 = new Plane(Vector3(1, 0, 0), 1);
-    Object* ball = new Sphere(Vector3(0, 2, 1), 1);
-
-    ground->setMaterial(groundMaterial);
-    ceiling->setMaterial(groundMaterial);
-    wall1->setMaterial(wallMaterial);
-    wall2->setMaterial(wallMaterial);
-    wall3->setMaterial(wallMaterial);
-    ball->setMaterial(ballMaterial);
+    Object* ground = new Plane(groundMaterial, Vector3(0, 0, 1), 1);
+    Object* ceiling = new Plane(groundMaterial, Vector3(0, 0, -1), 1);
+    Object* wall1 = new Plane(wallMaterial, Vector3(0, -1, 0), 1);
+    Object* wall2 = new Plane(wallMaterial, Vector3(-1, 0, 0), 1);
+    Object* wall3 = new Plane(wallMaterial, Vector3(1, 0, 0), 1);
+    Object* ball = new Sphere(ballMaterial, Vector3(0, 0.5, -0.5), 1);
 
     m_objects.push_back(ground);
     m_objects.push_back(ceiling);
     m_objects.push_back(wall1);
     m_objects.push_back(wall2);
     m_objects.push_back(wall3);
-    // m_objects.push_back(ball);
+    m_objects.push_back(ball);
 
     // 反射光比例小的物体优先，其次折射光
-    sort(m_objects.begin(), m_objects.end(), [](Object* A, Object* B) {
-        Material *a = A->getMaterial(), *b = B->getMaterial();
-        return a->refl + EPS < b->refl || (abs(a->refl - b->refl) < EPS && a->refr + EPS < b->refr);
+    sort(m_objects.begin(), m_objects.end(), [](const Object* A, const Object* B) {
+        return A->getMaterial()->compare(B->getMaterial());
     });
 }
 
@@ -79,12 +53,12 @@ Collision Scene::findNearestCollision(const Vector3& start, const Vector3& dir) 
     for (auto l : m_lights)
     {
         Collision coll = l->collide(start, dir);
-        if (coll.isHit() && coll.dist + EPS < ret.dist) ret = coll;
+        if (coll.isHit() && coll.dist + Const::EPS < ret.dist) ret = coll;
     }
     for (auto o : m_objects)
     {
         Collision coll = o->collide(start, dir);
-        if (coll.isHit() && coll.dist + EPS < ret.dist) ret = coll;
+        if (coll.isHit() && coll.dist + Const::EPS < ret.dist) ret = coll;
     }
     return ret;
 }

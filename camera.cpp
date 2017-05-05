@@ -4,13 +4,13 @@
 
 Camera::Camera()
     : m_eye(0, -1, 0), m_dir(0, 1, 0), m_up(0, 0, 1),
-      m_w(500), m_h(500), m_fovy(45 * PI / 180), m_dist(1)
+      m_w(500), m_h(500), m_fovy(45 * Const::PI / 180), m_dist(1)
 {
     m_init();
 }
 
 Camera::Camera(const Vector3& eye, const Vector3& dir, const Vector3& up, int w, int h, double f, double d)
-    : m_eye(eye), m_dir(dir), m_up(up), m_w(w), m_h(h), m_fovy(f * PI / 180), m_dist(d)
+    : m_eye(eye), m_dir(dir), m_up(up), m_w(w), m_h(h), m_fovy(f * Const::PI / 180), m_dist(d)
 {
     m_init();
 }
