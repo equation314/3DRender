@@ -47,14 +47,21 @@ Color RayTracer::m_calcReflection(const Collision& coll, const Material* materia
 {
     Vector3 r = coll.ray_dir.reflect(coll.n);
     Color ret = m_rayTraceing(coll.p, r, weight * material->refl, depth + 1);
-    return ret * material->color * material->refl;
+    return ret * (material->color * material->refl);
 }
 
 Color RayTracer::m_calcRefraction(const Collision& coll, const Material* material, double weight, int depth) const
 {
-    Vector3 r = coll.ray_dir.refract(coll.n, material->rindex);
+    double rindex = material->rindex;
+    if (coll.is_internal) rindex = 1 / rindex;
+    Vector3 r = coll.ray_dir.refract(coll.n, rindex);
+    if (r.mod2() < Const::EPS) return Color();
+
     Color ret = m_rayTraceing(coll.p, r, weight * material->refr, depth + 1);
-    return ret * material->color * material->refr;
+    if (!coll.is_internal)
+        return ret * material->refr;
+    else
+        return ret * (material->absorb_color * -coll.dist).exp() * material->refr;
 }
 
 Color RayTracer::m_rayTraceing(const Vector3& start, const Vector3& dir, double weight, int depth) const

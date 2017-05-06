@@ -20,6 +20,8 @@ public:
     Color& operator*=(const Color& B);
     Color operator*(double k) const;
     Color operator/(double k) const;
+    Color inverse() const;
+    Color exp() const;
     Color confine() const;
 
     double r, g, b;

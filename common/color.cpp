@@ -1,4 +1,5 @@
 #include "common/color.h"
+#include "common/const.h"
 
 Color operator+(const Color& A, const Color& B)
 {
@@ -43,6 +44,16 @@ Color& Color::operator-=(const Color& B)
 Color& Color::operator*=(const Color& B)
 {
     return *this = *this * B;
+}
+
+Color Color::inverse() const
+{
+    return Color(1 - r, 1 - g, 1 - b);
+}
+
+Color Color::exp() const
+{
+    return Color(std::exp(r), std::exp(g), std::exp(b));
 }
 
 Color Color::confine() const

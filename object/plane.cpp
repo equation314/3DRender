@@ -7,5 +7,8 @@ Collision Plane::collide(const Vector3& start, const Vector3& dir) const
     if (abs(d) < Const::EPS) return Collision();
     double t = -n / d;
     if (t < Const::EPS) return Collision();
-    return Collision(start, dir, t, n > Const::EPS ? m_n : -m_n, this);
+    if (n > Const::EPS)
+        return Collision(start, dir, t, m_n, false, this);
+    else
+        return Collision(start, dir, t, -m_n, true, this);
 }

@@ -59,11 +59,15 @@ Vector3 Vector3::unitize() const
 
 Vector3 Vector3::reflect(const Vector3& n) const
 {
-    return *this - n * (2 * n.dot(*this));
+    return *this - n * (2 * this->dot(n));
 }
 
 Vector3 Vector3::refract(const Vector3& n, double rindex) const
 {
-    // TODO
-    return *this;
+    double ni = 1 / rindex; // 折射率的倒数，nT/ni
+    double cosi = this->dot(n), cosT2 = 1 - ni * ni * (1 - cosi * cosi);
+    if (cosT2 < Const::EPS)
+        return Vector3();
+    else
+        return (*this) * ni - n * (sqrt(cosT2) + cosi * ni);
 }

@@ -25,8 +25,8 @@ double RectLight::getShadowRatio(const Scene* scene, const Vector3& p) const
     for (int i = 0; i < SHADOW_SAMPLE; i++)
         for (int j = 0; j < SHADOW_SAMPLE; j++)
         {
-            double x = (i + Const::randDouble()) * 2 / SHADOW_SAMPLE - 1,
-                   y = (j + Const::randDouble()) * 2 / SHADOW_SAMPLE - 1;
+            double x = (i + 0.5) * 2 / SHADOW_SAMPLE - 1,
+                   y = (j + 0.5) * 2 / SHADOW_SAMPLE - 1;
             Vector3 c = m_o + m_dx * x + m_dy * y, dir = c - p;
             double dist = dir.mod();
 

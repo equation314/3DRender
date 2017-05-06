@@ -15,12 +15,12 @@ Collision Sphere::collide(const Vector3& start, const Vector3& dir) const
             if (t1 > Const::EPS)
             {
                 Vector3 p = start + d * t1;
-                return Collision(start, d, t1, p - m_o, this);
+                return Collision(start, d, t1, p - m_o, false, this);
             }
             else if (t2 > Const::EPS)
             {
                 Vector3 p = start + d * t2;
-                return Collision(start, d, t2, m_o - p, this);
+                return Collision(start, d, t2, m_o - p, true, this);
             }
         }
     }
