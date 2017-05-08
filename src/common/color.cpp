@@ -1,6 +1,16 @@
 #include "common/color.h"
 #include "common/const.h"
 
+Color::Color(const Json::Value& color)
+    : r(0), g(0), b(0)
+{
+    if (color.isString())
+    {
+        string s = color.asString();
+        sscanf(s.c_str(), "(%lf,%lf,%lf)", &r, &g, &b);
+    }
+}
+
 Color operator+(const Color& A, const Color& B)
 {
     return Color(A.r + B.r, A.g + B.g, A.b + B.b);

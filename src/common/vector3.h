@@ -11,6 +11,7 @@ public:
         : x(0), y(0), z(0) {}
     Vector3(double x, double y, double z)
         : x(x), y(y), z(z) {}
+    Vector3(const Json::Value& vec);
 
     friend Vector3 operator+(const Vector3& A, const Vector3& B);
     friend Vector3 operator-(const Vector3& A, const Vector3& B);

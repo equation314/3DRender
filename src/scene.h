@@ -13,6 +13,7 @@ class Scene
 {
 public:
     Scene();
+    Scene(const Json::Value& scene);
     ~Scene();
 
     Camera* getCamera() const { return m_camera; }
@@ -29,11 +30,11 @@ public:
     // 保存为 JSON 格式
     Json::Value toJson() const;
 
-    // 导入场景
-    void load(const std::string& file);
-
     // 保存 JSON 到文件
     void save(const std::string& file) const;
+
+    // 导入场景
+    static Scene* loadFrom(const std::string& file);
 
 private:
     Camera* m_camera;      // 相机
@@ -41,6 +42,8 @@ private:
 
     std::vector<Light*> m_lights;
     std::vector<Object*> m_objects;
+
+    void m_init();
 };
 
 #endif // SCENE_H

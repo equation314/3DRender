@@ -19,6 +19,16 @@ Material::Material(const Color& c, double d, double s, double rl, double rr, dou
 {
 }
 
+Material::Material(const Json::Value material)
+    : color(material["color"]), absorb_color(material["absorb_color"]),
+      diff(material["diff"].asDouble()), spec(material["spec"].asDouble()), refl(material["refl"].asDouble()),
+      refr(material["refr"].asDouble()), rindex(material["refr_index"].asDouble()),
+      m_texture(nullptr), m_texture_func(nullptr)
+{
+    if (material["texture"].isString())
+        m_texture = new Bmp(material["texture"].asString());
+}
+
 Material::~Material()
 {
     if (m_texture) delete m_texture;

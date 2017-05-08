@@ -12,6 +12,8 @@ class Light
 public:
     Light(const Color& c)
         : m_color(c) {}
+    Light(const Json::Value& light)
+        : m_color(light["color"]) {}
     virtual ~Light() {}
 
     Color getColor() const { return m_color; }

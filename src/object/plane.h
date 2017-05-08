@@ -8,6 +8,7 @@ class Plane : public Object
 {
 public:
     Plane(const Material* m, const Vector3& n, double d);
+    Plane(const Json::Value& object);
 
     // 与视线相交
     virtual Collision collide(const Vector3& start, const Vector3& dir) const override;

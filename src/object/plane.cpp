@@ -13,6 +13,12 @@ Plane::Plane(const Material* m, const Vector3& n, double d)
     m_dy = (m_dx * m_n).unitize();
 }
 
+Plane::Plane(const Json::Value& object)
+    : Object(object), m_n(object["n"]), m_d(object["d"].asDouble()),
+      m_o(object["texture_o"]), m_dx(object["texture_dx"]), m_dy(object["texture_dy"])
+{
+}
+
 Collision Plane::collide(const Vector3& start, const Vector3& dir) const
 {
     double n = m_n.dot(start) + m_d, d = m_n.dot(dir);

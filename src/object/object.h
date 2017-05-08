@@ -12,6 +12,8 @@ class Object
 public:
     Object(const Material* m)
         : m_material(m) {}
+    Object(const Json::Value& object)
+        : m_material(new Material(object["material"])) {}
     virtual ~Object() {}
 
     const Material* getMaterial() const { return m_material; }

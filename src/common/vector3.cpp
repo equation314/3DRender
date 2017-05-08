@@ -1,6 +1,16 @@
 #include "common/const.h"
 #include "common/vector3.h"
 
+Vector3::Vector3(const Json::Value& vec)
+    : x(0), y(0), z(0)
+{
+    if (vec.isString())
+    {
+        string s = vec.asString();
+        sscanf(s.c_str(), "(%lf,%lf,%lf)", &x, &y, &z);
+    }
+}
+
 Vector3 operator+(const Vector3& A, const Vector3& B)
 {
     return Vector3(A.x + B.x, A.y + B.y, A.z + B.z);

@@ -9,6 +9,8 @@ class PointLight : public Light
 public:
     PointLight(const Color& c, const Vector3& o)
         : Light(c), m_o(o) {}
+    PointLight(const Json::Value& light)
+        : Light(light), m_o(light["o"]) {}
 
     // 发光点
     virtual Vector3 getSource() const override { return m_o; }

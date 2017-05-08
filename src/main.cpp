@@ -4,8 +4,7 @@
 int main()
 {
     RayTracer* engine = new RayTracer();
-    Scene* scene = new Scene();
-    scene->save("scene.json");
+    Scene* scene = Scene::loadFrom("../scenes/scene1.json");
     engine->run(scene);
     return 0;
 }

@@ -13,6 +13,7 @@ class Camera
 public:
     Camera();
     Camera(const Vector3& eye, const Vector3& dir, const Vector3& up, int w, int h, double f, double d);
+    Camera(const Json::Value& camera);
     ~Camera();
 
     int getW() const { return m_w; }

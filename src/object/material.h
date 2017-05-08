@@ -16,6 +16,8 @@ public:
     // 透明材质
     Material(const Color& c, double d, double s, double rl, double rr, double ri, const Color& absorb);
 
+    Material(const Json::Value material);
+
     ~Material();
 
     Color color, absorb_color; // 颜色，透射时吸收的颜色

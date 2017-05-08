@@ -11,6 +11,7 @@ public:
         : r(0), g(0), b(0) {}
     Color(double r, double g, double b)
         : r(r), g(g), b(b) {}
+    Color(const Json::Value& color);
 
     friend Color operator+(const Color& A, const Color& B);
     friend Color operator-(const Color& A, const Color& B);

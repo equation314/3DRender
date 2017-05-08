@@ -7,6 +7,12 @@ Sphere::Sphere(const Material* m, const Vector3& o, double r)
 {
 }
 
+Sphere::Sphere(const Json::Value& object)
+    : Object(object), m_o(object["o"]), m_r(object["r"].asDouble()),
+      m_dz(object["texture_dz"]), m_dx(object["texture_dx"])
+{
+}
+
 Collision Sphere::collide(const Vector3& start, const Vector3& dir) const
 {
     Vector3 d = dir.unitize();
