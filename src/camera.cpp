@@ -41,3 +41,16 @@ void Camera::m_init()
     m_dw = (m_dh * m_dir).unitize() * tan(m_fovy) * m_dist * (1.0 * m_w / m_h);
     m_film = new Bmp(m_w, m_h);
 }
+
+Json::Value Camera::toJson() const
+{
+    Json::Value camera;
+    camera["eye"] = m_eye.toJson();
+    camera["dir"] = m_dir.toJson();
+    camera["up"] = m_up.toJson();
+    camera["w"] = m_w;
+    camera["h"] = m_h;
+    camera["fovy"] = m_fovy * 180 / Const::PI;
+    camera["dist"] = m_dist;
+    return camera;
+}

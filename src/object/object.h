@@ -22,6 +22,8 @@ public:
     // 某点的纹理颜色
     virtual Color getTextureColor(const Vector3& p) const = 0;
 
+    virtual Json::Value toJson() const;
+
 protected:
     const Material* m_material;
 };

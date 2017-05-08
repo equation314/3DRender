@@ -71,3 +71,10 @@ Vector3 Vector3::refract(const Vector3& n, double rindex) const
     else
         return (*this) * ni - n * (sqrt(cosT2) + cosi * ni);
 }
+
+Json::Value Vector3::toJson() const
+{
+    char str[256];
+    sprintf(str, "(%lf, %lf, %lf)", x, y, z);
+    return Json::Value(str);
+}

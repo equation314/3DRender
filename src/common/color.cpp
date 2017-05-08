@@ -60,3 +60,10 @@ Color Color::confine() const
 {
     return Color(std::max(std::min(r, 1.0), 0.0), std::max(std::min(g, 1.0), 0.0), std::max(std::min(b, 1.0), 0.0));
 }
+
+Json::Value Color::toJson() const
+{
+    char str[256];
+    sprintf(str, "(%lf, %lf, %lf)", r, g, b);
+    return Json::Value(str);
+}

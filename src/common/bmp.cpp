@@ -6,7 +6,8 @@
 #define ENABLE_TEXTURE_FILTERING // 启用纹理滤波
 
 Bmp::Bmp(int w, int h, const Color& background)
-    : m_w(w), m_h(h)
+    : m_w(w), m_h(h),
+      m_file_name("")
 {
     m_data = new BmpColor*[w];
     for (int i = 0; i < m_w; i++)
@@ -30,6 +31,7 @@ Bmp::Bmp(int w, int h, const Color& background)
 }
 
 Bmp::Bmp(const std::string& file)
+    : m_file_name(file)
 {
     FILE* f = fopen(file.c_str(), "rb");
 

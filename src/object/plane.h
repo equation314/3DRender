@@ -18,6 +18,8 @@ public:
     // 设置纹理坐标轴
     void setTextureAxis(const Vector3& o, const Vector3& dx, const Vector3& dy) { m_o = o, m_dx = dx, m_dy = dy; }
 
+    virtual Json::Value toJson() const override;
+
 private:
     Vector3 m_n;             // 法向量
     double m_d;              // 直线方程为 n * P + d = 0

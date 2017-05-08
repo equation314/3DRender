@@ -47,3 +47,17 @@ Color Sphere::getTextureColor(const Vector3& p) const
     else
         return Color(1, 1, 1);
 }
+
+Json::Value Sphere::toJson() const
+{
+    Json::Value object = Object::toJson();
+    object["type"] = "Sphere";
+    object["o"] = m_o.toJson();
+    object["r"] = m_r;
+    if (m_material->hasTexture())
+    {
+        object["texture_dz"] = m_dz.toJson();
+        object["texture_dx"] = m_dx.toJson();
+    }
+    return object;
+}

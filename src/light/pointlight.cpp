@@ -19,3 +19,11 @@ double PointLight::getShadowRatio(const Scene* scene, const Vector3& p) const
     }
     return 1;
 }
+
+Json::Value PointLight::toJson() const
+{
+    Json::Value light = Light::toJson();
+    light["type"] = "PointLight";
+    light["o"] = m_o.toJson();
+    return light;
+}

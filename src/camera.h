@@ -28,6 +28,8 @@ public:
     // 打印照片到 file 文件
     void print(const std::string& file) const;
 
+    Json::Value toJson() const;
+
 private:
     Vector3 m_eye, m_dir, m_up; // 相机位置、视线方向、上方向，up 需与 dir 垂直
     int m_w, m_h;               // 分辨率

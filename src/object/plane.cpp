@@ -37,3 +37,18 @@ Color Plane::getTextureColor(const Vector3& p) const
     else
         return Color(1, 1, 1);
 }
+
+Json::Value Plane::toJson() const
+{
+    Json::Value object = Object::toJson();
+    object["type"] = "Plane";
+    object["n"] = m_n.toJson();
+    object["d"] = m_d;
+    if (m_material->hasTexture())
+    {
+        object["texture_o"] = m_o.toJson();
+        object["texture_dx"] = m_dx.toJson();
+        object["texture_dy"] = m_dy.toJson();
+    }
+    return object;
+}

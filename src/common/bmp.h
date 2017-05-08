@@ -1,8 +1,6 @@
 #ifndef BMP_H
 #define BMP_H
 
-#pragma pack(1)
-
 #include "common/color.h"
 
 #include <string>
@@ -20,12 +18,14 @@ public:
     Color getColor(double u, double v) const;
     void setColor(int x, int y, const Color& color);
     void save(const std::string& file) const;
+    std::string getFilename() const { return m_file_name; }
 
 private:
     typedef unsigned char byte;
     typedef unsigned short word;
     typedef unsigned int dword;
 
+#pragma pack(push, 1)
     struct BITMAPFILEHEADER
     {
         word bfType;
@@ -48,6 +48,7 @@ private:
         dword biClrUsed;
         dword biClrImportant;
     };
+#pragma pack(pop)
     struct BmpColor
     {
         byte r, g, b;
@@ -60,6 +61,7 @@ private:
     BITMAPFILEHEADER m_bf;
     BITMAPINFOHEADER m_bi;
     BmpColor** m_data;
+    std::string m_file_name;
 };
 
 #endif // BMP_H

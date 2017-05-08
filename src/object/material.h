@@ -38,6 +38,8 @@ public:
     // 求交时的优先级
     bool compare(const Material* B) const;
 
+    virtual Json::Value toJson() const;
+
 private:
     Bmp* m_texture;                          // 纹理图片
     Color (*m_texture_func)(double, double); // 纹理函数

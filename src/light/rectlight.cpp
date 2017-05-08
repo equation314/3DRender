@@ -42,3 +42,13 @@ double RectLight::getShadowRatio(const Scene* scene, const Vector3& p) const
         }
     return 1.0 * ret / SHADOW_SAMPLE / SHADOW_SAMPLE;
 }
+
+Json::Value RectLight::toJson() const
+{
+    Json::Value light = Light::toJson();
+    light["type"] = "RectLight";
+    light["o"] = m_o.toJson();
+    light["dx"] = m_dx.toJson();
+    light["dy"] = m_dy.toJson();
+    return light;
+}

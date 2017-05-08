@@ -2,6 +2,7 @@
 #define VECTOR3_H
 
 #include <ostream>
+#include <json/value.h>
 
 struct Vector3
 {
@@ -30,6 +31,8 @@ public:
 
     // 折射
     Vector3 refract(const Vector3& n, double rindex) const;
+
+    Json::Value toJson() const;
 
     double x, y, z;
 };

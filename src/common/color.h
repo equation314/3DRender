@@ -2,6 +2,7 @@
 #define COLOR_H
 
 #include <ostream>
+#include <json/value.h>
 
 struct Color
 {
@@ -23,6 +24,8 @@ public:
     Color inverse() const;
     Color exp() const;
     Color confine() const;
+
+    Json::Value toJson() const;
 
     double r, g, b;
 };

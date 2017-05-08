@@ -10,6 +10,8 @@
 #include "scene.h"
 
 #include <algorithm>
+#include <fstream>
+#include <json/writer.h>
 
 Scene::Scene()
     : m_camera(new Camera()), m_ambient_color(Color(0.1, 0.1, 0.1))
@@ -83,4 +85,23 @@ Collision Scene::findNearestCollision(const Vector3& start, const Vector3& dir) 
         if (coll.isHit() && coll.dist + Const::EPS < ret.dist) ret = coll;
     }
     return ret;
+}
+
+Json::Value Scene::toJson() const
+{
+    Json::Value scene, lights, objects;
+    for (auto l : m_lights) lights.append(l->toJson());
+    for (auto o : m_objects) objects.append(o->toJson());
+    scene["ambient_color"] = m_ambient_color.toJson();
+    scene["lights"] = lights;
+    scene["objects"] = objects;
+    scene["camera"] = m_camera->toJson();
+    return scene;
+}
+
+void Scene::save(const string& file) const
+{
+    std::ofstream fout(file.c_str());
+    fout << this->toJson() << std::endl;
+    fout.close();
 }

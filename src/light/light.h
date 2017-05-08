@@ -25,6 +25,8 @@ public:
     // 计算阴影比例，值越小阴影越深
     virtual double getShadowRatio(const Scene* scene, const Vector3& p) const = 0;
 
+    virtual Json::Value toJson() const;
+
 protected:
     Color m_color;
 };

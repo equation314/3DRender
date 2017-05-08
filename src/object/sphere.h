@@ -18,6 +18,8 @@ public:
     // 设置纹理坐标轴
     void setTextureAxis(const Vector3& dz, const Vector3& dx) { m_dz = dz, m_dx = dx; }
 
+    virtual Json::Value toJson() const override;
+
 private:
     Vector3 m_o;        // 球心
     double m_r;         // 半径

@@ -39,3 +39,23 @@ bool Material::compare(const Material* B) const
     return this->refl + Const::EPS < B->refl ||
            (abs(this->refl - B->refl) < Const::EPS && this->refr + Const::EPS < B->refr);
 }
+
+Json::Value Material::toJson() const
+{
+    Json::Value material;
+    material["color"] = color.toJson();
+    material["diff"] = diff;
+    material["spec"] = spec;
+    if (refl > Const::EPS) material["refl"] = refl;
+    if (refr > Const::EPS)
+    {
+        material["refr"] = refr;
+        material["refr_index"] = rindex;
+        material["absorb_color"] = absorb_color.toJson();
+    }
+    if (m_texture)
+        material["texture"] = m_texture->getFilename();
+    else if (m_texture_func)
+        material["texture_func"] = "Function";
+    return material;
+}
