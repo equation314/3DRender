@@ -1,10 +1,6 @@
 [Bb]uild/
 .vscode
 
-*.bmp
-*.png
-*.jpg
-
 # Compiled Object files
 *.slo
 *.lo

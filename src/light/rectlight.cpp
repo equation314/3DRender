@@ -3,7 +3,7 @@
 #include "light/rectlight.h"
 #include "scene.h"
 
-const int SHADOW_SAMPLE = 8;
+const int SHADOW_SAMPLE = 4;
 
 Collision RectLight::collide(const Vector3& start, const Vector3& dir) const
 {

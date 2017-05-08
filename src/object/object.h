@@ -19,6 +19,9 @@ public:
     // 与视线相交
     virtual Collision collide(const Vector3& start, const Vector3& dir) const = 0;
 
+    // 某点的纹理颜色
+    virtual Color getTextureColor(const Vector3& p) const = 0;
+
 protected:
     const Material* m_material;
 };

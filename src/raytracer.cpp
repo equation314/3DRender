@@ -17,6 +17,7 @@ void RayTracer::run(Scene* scene)
     for (int i = 0; i < w; i++)
         for (int j = 0; j < h; j++)
         {
+            if (!j) cout << "column " << i << endl;
             Vector3 dir = camera->emit(i, j);
             Color color = m_rayTraceing(camera->getEye(), dir, 1, 1);
             camera->setColor(i, j, color);
@@ -28,7 +29,8 @@ void RayTracer::run(Scene* scene)
 Color RayTracer::m_calcLocalIllumination(const Collision& coll, const Material* material) const
 {
     Vector3 r = coll.ray_dir.reflect(coll.n);
-    Color ret = material->color * m_scene->getAmbientLightColor() * material->diff; // 环境光
+    Color color = material->color * coll.object->getTextureColor(coll.p);
+    Color ret = color * m_scene->getAmbientLightColor() * material->diff; // 环境光
     for (auto light = m_scene->lightsBegin(); light != m_scene->lightsEnd(); light++)
     {
         double shade = (*light)->getShadowRatio(m_scene, coll.p);
@@ -36,9 +38,9 @@ Color RayTracer::m_calcLocalIllumination(const Collision& coll, const Material* 
 
         Vector3 l = ((*light)->getSource() - coll.p).unitize();
         if (material->diff > Const::EPS) // 漫反射
-            ret += material->color * (*light)->getColor() * (material->diff * l.dot(coll.n) * shade);
+            ret += color * (*light)->getColor() * (material->diff * l.dot(coll.n) * shade);
         if (material->spec > Const::EPS) // 镜面反射
-            ret += material->color * (*light)->getColor() * (material->spec * pow(l.dot(r), SPEC_POWER));
+            ret += color * (*light)->getColor() * (material->spec * pow(l.dot(r), SPEC_POWER));
     }
     return ret;
 }
@@ -83,9 +85,7 @@ Color RayTracer::m_rayTraceing(const Vector3& start, const Vector3& dir, double 
         if (obj->getMaterial()->refr > Const::EPS)
             ret += m_calcRefraction(coll, obj->getMaterial(), weight, depth);
 
-        ret = ret.confine();
-
-        return ret;
+        return ret.confine();
     }
     else
         return m_scene->getAmbientLightColor();

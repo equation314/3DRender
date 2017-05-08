@@ -58,5 +58,5 @@ Color Color::exp() const
 
 Color Color::confine() const
 {
-    return Color(std::min(r, 1.0), std::min(g, 1.0), std::min(b, 1.0));
+    return Color(std::max(std::min(r, 1.0), 0.0), std::max(std::min(g, 1.0), 0.0), std::max(std::min(b, 1.0), 0.0));
 }

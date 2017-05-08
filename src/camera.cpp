@@ -3,7 +3,7 @@
 #include "common/const.h"
 
 Camera::Camera()
-    : m_eye(0, -1, 0), m_dir(0, 1, 0), m_up(0, 0, 1),
+    : m_eye(0, -1, -0.5), m_dir(0, 1, 0), m_up(0, 0, 1),
       m_w(500), m_h(500), m_fovy(45 * Const::PI / 180), m_dist(1)
 {
     m_init();
