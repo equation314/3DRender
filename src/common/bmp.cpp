@@ -31,9 +31,15 @@ Bmp::Bmp(int w, int h, const Color& background)
 }
 
 Bmp::Bmp(const std::string& file)
-    : m_file_name(file)
+    : m_w(0), m_h(0),
+      m_file_name(file)
 {
     FILE* f = fopen(file.c_str(), "rb");
+    if (!f)
+    {
+        std::cout << "ERROR: No such BMP file '" + file + "'" << std::endl;
+        return;
+    }
 
     fread(&m_bf, 1, sizeof(BITMAPFILEHEADER), f);
     fread(&m_bi, 1, sizeof(BITMAPINFOHEADER), f);

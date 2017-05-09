@@ -88,6 +88,11 @@ Scene* Scene::loadFrom(const std::string& file)
 {
     Json::Value scene;
     std::ifstream fin(file.c_str());
+    if (!fin)
+    {
+        std::cout << "ERROR: No such scene file '" + file + "'" << std::endl;
+        return nullptr;
+    }
     fin >> scene;
     fin.close();
     return new Scene(scene);

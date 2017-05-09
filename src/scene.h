@@ -18,6 +18,11 @@ public:
 
     Camera* getCamera() const { return m_camera; }
     Color getAmbientLightColor() const { return m_ambient_color; }
+    Light* getLight(int i) const { return m_lights[i]; }
+    Object* getObject(int i) const { return m_objects[i]; }
+
+    void addLight(Light* light) { m_lights.push_back(light); }
+    void addObject(Object* object) { m_objects.push_back(object); }
 
     std::vector<Light*>::const_iterator lightsBegin() const { return m_lights.begin(); }
     std::vector<Light*>::const_iterator lightsEnd() const { return m_lights.end(); }
