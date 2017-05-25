@@ -1,7 +1,7 @@
-#include "collision.h"
 #include "common/const.h"
 #include "light/rectlight.h"
-#include "scene.h"
+#include "object/object.h"
+#include "scene/scene.h"
 
 const int SHADOW_SAMPLE = 4;
 

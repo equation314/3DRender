@@ -1,7 +1,12 @@
 #ifndef RAYTRACER_H
 #define RAYTRACER_H
 
-#include "scene.h"
+#include "common/color.h"
+#include "common/vector3.h"
+
+class Collision;
+class Material;
+class Scene;
 
 class RayTracer
 {

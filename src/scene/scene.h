@@ -1,13 +1,12 @@
 #ifndef SCENE_H
 #define SCENE_H
 
-#include "camera.h"
-#include "light/light.h"
-#include "object/object.h"
-
 #include <vector>
 
+class Camera;
 class Collision;
+class Light;
+class Object;
 
 class Scene
 {

@@ -1,8 +1,8 @@
 #ifndef LIGHT_H
 #define LIGHT_H
 
-#include "collision.h"
 #include "common/color.h"
+#include "object/collision.h"
 
 class Scene;
 class PointLight;

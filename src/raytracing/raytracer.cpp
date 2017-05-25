@@ -1,8 +1,9 @@
-#include "camera.h"
 #include "common/const.h"
 #include "light/light.h"
 #include "object/object.h"
-#include "raytracer.h"
+#include "raytracing/raytracer.h"
+#include "scene/camera.h"
+#include "scene/scene.h"
 
 const double MIN_WEIGHT = 0.05;
 const int MAX_DEPTH = 10;

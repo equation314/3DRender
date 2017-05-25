@@ -1,4 +1,3 @@
-#include "collision.h"
 #include "common/bmp.h"
 #include "common/const.h"
 #include "light/light.h"
@@ -7,7 +6,8 @@
 #include "object/object.h"
 #include "object/plane.h"
 #include "object/sphere.h"
-#include "scene.h"
+#include "scene/camera.h"
+#include "scene/scene.h"
 
 #include <algorithm>
 #include <fstream>

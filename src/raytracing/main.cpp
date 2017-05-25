@@ -1,5 +1,5 @@
-#include "raytracer.h"
-#include "scene.h"
+#include "raytracing/raytracer.h"
+#include "scene/scene.h"
 
 int main()
 {

@@ -1,7 +1,7 @@
-#include "collision.h"
 #include "common/const.h"
 #include "light/pointlight.h"
-#include "scene.h"
+#include "object/object.h"
+#include "scene/scene.h"
 
 Collision PointLight::collide(const Vector3& start, const Vector3& dir) const
 {
