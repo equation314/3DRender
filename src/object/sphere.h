@@ -7,7 +7,7 @@
 class Sphere : public Object
 {
 public:
-    Sphere(const Material* m, const Vector3& o, double r);
+    Sphere(const Vector3& o, double r, const Material* m = nullptr);
     Sphere(const Json::Value& object);
 
     // 与视线相交

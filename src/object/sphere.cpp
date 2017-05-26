@@ -1,7 +1,7 @@
 #include "common/const.h"
 #include "object/sphere.h"
 
-Sphere::Sphere(const Material* m, const Vector3& o, double r)
+Sphere::Sphere(const Vector3& o, double r, const Material* m)
     : Object(m), m_o(o), m_r(r),
       m_dz(0, 0, 1), m_dx(1, 0, 0)
 {

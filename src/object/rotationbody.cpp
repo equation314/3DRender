@@ -1,7 +1,7 @@
 #include "common/const.h"
 #include "object/rotationbody.h"
 
-RotationBody::RotationBody(const Material* m, const Vector3& o, const Curves& curves)
+RotationBody::RotationBody(const Vector3& o, const Curves& curves, const Material* m)
     : Object(m), m_o(o), m_curves(curves)
 {
 }

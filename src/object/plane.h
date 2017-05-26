@@ -7,7 +7,7 @@
 class Plane : public Object
 {
 public:
-    Plane(const Material* m, const Vector3& n, double d);
+    Plane(const Vector3& n, double d, const Material* m = nullptr);
     Plane(const Json::Value& object);
 
     // 与视线相交

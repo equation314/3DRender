@@ -12,7 +12,7 @@ class RotationBody : public Object
 public:
     typedef std::vector<BezierCurve3> Curves;
 
-    RotationBody(const Material* m, const Vector3& o, const Curves& curves = {});
+    RotationBody(const Vector3& o, const Curves& curves = {}, const Material* m = nullptr);
     RotationBody(const Json::Value& object);
 
     // 与视线相交

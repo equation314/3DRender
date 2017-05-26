@@ -14,6 +14,8 @@
 #include <json/reader.h>
 #include <json/writer.h>
 
+std::string Scene::m_scene_file_dir = "";
+
 Scene::Scene()
     : m_camera(new Camera()), m_ambient_color(Color())
 {
@@ -25,17 +27,17 @@ Scene::Scene(const Json::Value& scene)
 {
     for (auto l : scene["lights"])
     {
-        if (l["type"] == "PointLight")
-            m_lights.push_back(new PointLight(l));
-        else if (l["type"] == "RectLight")
-            m_lights.push_back(new RectLight(l));
+        Light* light = Light::loadFromJson(l);
+        if (light) m_lights.push_back(light);
     }
     for (auto o : scene["objects"])
     {
-        if (o["type"] == "Plane")
-            m_objects.push_back(new Plane(o));
-        else if (o["type"] == "Sphere")
-            m_objects.push_back(new Sphere(o));
+        Object* object;
+        if (o.isString())
+            object = Object::loadFrom(m_scene_file_dir + "/" + o.asString());
+        else
+            object = Object::loadFromJson(o);
+        if (object) m_objects.push_back(object);
     }
     m_init();
 }
@@ -77,7 +79,7 @@ Json::Value Scene::toJson() const
     return scene;
 }
 
-void Scene::save(const string& file) const
+void Scene::save(const std::string& file) const
 {
     std::ofstream fout(file.c_str());
     fout << this->toJson() << std::endl;
@@ -90,11 +92,13 @@ Scene* Scene::loadFrom(const std::string& file)
     std::ifstream fin(file.c_str());
     if (!fin)
     {
-        std::cout << "ERROR: No such scene file '" + file + "'" << std::endl;
+        std::cerr << "ERROR: No such scene file '" + file + "'" << std::endl;
         return nullptr;
     }
     fin >> scene;
     fin.close();
+
+    m_scene_file_dir = file.substr(0, file.find_last_of('/'));
     return new Scene(scene);
 }
 

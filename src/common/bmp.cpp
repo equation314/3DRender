@@ -37,7 +37,7 @@ Bmp::Bmp(const std::string& file)
     FILE* f = fopen(file.c_str(), "rb");
     if (!f)
     {
-        std::cout << "ERROR: No such BMP file '" + file + "'" << std::endl;
+        std::cerr << "ERROR: No such BMP file '" + file + "'" << std::endl;
         return;
     }
 

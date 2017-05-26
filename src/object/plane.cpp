@@ -1,7 +1,7 @@
 #include "common/const.h"
 #include "object/plane.h"
 
-Plane::Plane(const Material* m, const Vector3& n, double d)
+Plane::Plane(const Vector3& n, double d, const Material* m)
     : Object(m), m_n(n.unitize()), m_d(d),
       m_o(0, 0, 0)
 {

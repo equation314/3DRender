@@ -37,7 +37,7 @@ public:
     // 保存 JSON 到文件
     void save(const std::string& file) const;
 
-    // 导入场景
+    // 从文件导入场景
     static Scene* loadFrom(const std::string& file);
 
 private:
@@ -46,6 +46,8 @@ private:
 
     std::vector<Light*> m_lights;
     std::vector<Object*> m_objects;
+
+    static std::string m_scene_file_dir; // 场景文件路径
 
     void m_init();
 };

@@ -6,13 +6,12 @@
 
 class Plane;
 class Sphere;
+class RotationBody;
 
 class Object
 {
 public:
-    Object(const Material* m);
-    Object(const Json::Value& object);
-    virtual ~Object() {}
+    virtual ~Object();
 
     const Material* getMaterial() const { return m_material; }
 
@@ -22,10 +21,26 @@ public:
     // 某点的纹理颜色
     virtual Color getTextureColor(const Vector3& p) const = 0;
 
+    // 保存为 JSON 格式
     virtual Json::Value toJson() const;
 
+    // 保存 JSON 到文件
+    void save(const std::string& file) const;
+
+    // 从 JSON 导入物体
+    static Object* loadFromJson(const Json::Value& value);
+
+    // 从文件导入物体
+    static Object* loadFrom(const std::string& file);
+
 protected:
+    Object(const Material* m);
+    Object(const Json::Value& object);
+
     const Material* m_material;
+
+private:
+    bool m_can_delete_material;
 };
 
 #endif // OBJECT_H

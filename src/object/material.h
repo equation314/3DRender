@@ -7,6 +7,8 @@
 struct Material
 {
 public:
+    Material();
+
     // 漫反射材质
     Material(const Color& c, double d, double s);
 
@@ -18,7 +20,7 @@ public:
 
     Material(const Json::Value material);
 
-    ~Material();
+    virtual ~Material();
 
     Color color, absorb_color; // 颜色，透射时吸收的颜色
     double diff, spec;         // 漫反射系数，镜面反射系数

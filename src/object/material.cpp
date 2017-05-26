@@ -1,6 +1,12 @@
 #include "common/const.h"
 #include "object/material.h"
 
+Material::Material()
+    : color(1, 1, 1), absorb_color(0, 0, 0), diff(0.8), spec(0.2), refl(0), refr(0), rindex(1),
+      m_texture(nullptr), m_texture_func(nullptr)
+{
+}
+
 Material::Material(const Color& c, double d, double s)
     : color(c), diff(d), spec(s), refl(0), refr(0), rindex(1),
       m_texture(nullptr), m_texture_func(nullptr)
