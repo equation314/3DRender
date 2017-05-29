@@ -26,6 +26,11 @@ Vector3 operator*(const Vector3& A, const Vector3& B)
     return Vector3(A.y * B.z - A.z * B.y, A.z * B.x - A.x * B.z, A.x * B.y - A.y * B.x);
 }
 
+double Vector3::mix(const Vector3& A, const Vector3& B, const Vector3& C)
+{
+    return A.dot(B * C);
+}
+
 std::ostream& operator<<(std::ostream& out, const Vector3& v)
 {
     return out << '(' << v.x << ' ' << v.y << ' ' << v.z << ')';

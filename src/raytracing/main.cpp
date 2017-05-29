@@ -4,7 +4,7 @@
 int main()
 {
     RayTracer* engine = new RayTracer();
-    Scene* scene = Scene::loadFrom("../scenes/scene1.json");
+    Scene* scene = Scene::loadFrom("../scenes/scene2.json");
     if (scene)
     {
         engine->run(scene);

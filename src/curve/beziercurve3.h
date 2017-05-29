@@ -12,7 +12,7 @@ public:
         : P0(curve[0]), P1(curve[1]), P2(curve[2]), P3(curve[3]) {}
 
     Vector2 P(double t) const;  // 曲线上一点 P(t)
-    Vector2 dP(double t) const; // 曲线上一点 P(t) 的切矢量 P'(t)
+    Vector2 dP(double t) const; // 曲线上一点 P(t) 的切向量 P'(t)
 
     Json::Value toJson() const;
 

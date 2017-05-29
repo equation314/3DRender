@@ -6,7 +6,7 @@
 #include "scene/scene.h"
 
 const double MIN_WEIGHT = 0.05;
-const int MAX_DEPTH = 10;
+const int MAX_DEPTH = 5;
 const int SPEC_POWER = 50;
 
 void RayTracer::run(Scene* scene)
@@ -34,12 +34,14 @@ Color RayTracer::m_calcLocalIllumination(const Collision& coll, const Material* 
     Color ret = color * m_scene->getAmbientLightColor() * material->diff; // 环境光
     for (auto light = m_scene->lightsBegin(); light != m_scene->lightsEnd(); light++)
     {
+        Vector3 l = ((*light)->getSource() - coll.p).unitize();
+        double f = l.dot(coll.n);
+        if (f < Const::EPS) continue;
         double shade = (*light)->getShadowRatio(m_scene, coll.p);
         if (shade < Const::EPS) continue;
 
-        Vector3 l = ((*light)->getSource() - coll.p).unitize();
         if (material->diff > Const::EPS) // 漫反射
-            ret += color * (*light)->getColor() * (material->diff * l.dot(coll.n) * shade);
+            ret += color * (*light)->getColor() * (material->diff * f * shade);
         if (material->spec > Const::EPS) // 镜面反射
             ret += color * (*light)->getColor() * (material->spec * pow(l.dot(r), SPEC_POWER));
     }

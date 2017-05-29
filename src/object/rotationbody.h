@@ -27,7 +27,7 @@ public:
     void addCurve(const BezierCurve3& curve) { m_curves.push_back(curve); }
 
     // 曲面上一点 P(u, v)
-    Vector3 P(double u, double v) const;
+    Vector3 P(int i, double u, double v) const;
 
     // 保存为 OBJ 格式
     void saveOBJ(const std::string& file, int density) const;
@@ -35,6 +35,9 @@ public:
 private:
     Vector3 m_o;     // 底面中心点
     Curves m_curves; // 曲线
+
+    Vector3 m_dPdu(int i, double u, double v) const; // 对 u 的偏导数
+    Vector3 m_dPdv(int i, double u, double v) const; // 对 v 的偏导数
 };
 
 #endif // ROTATIONBODY_H
