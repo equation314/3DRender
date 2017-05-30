@@ -17,7 +17,6 @@ Collision RotationBody::collide(const Vector3& start, const Vector3& dir) const
 {
     const int NUM = 8;
     Vector3 d = dir.unitize();
-    bool in = false;
     int curve_id = 0;
     Vector3 res(1e9, 0, 0);
     for (size_t i = 0; i < m_curves.size(); i++)
@@ -41,9 +40,7 @@ Collision RotationBody::collide(const Vector3& start, const Vector3& dir) const
                 t -= dt, u += du, v += dv;
                 if (f < 1e-10 && u > -Const::EPS && u < 1 + Const::EPS)
                 {
-                    if (t < Const::EPS)
-                        in = true;
-                    else if (t < res.x - Const::EPS)
+                    if (t > Const::EPS && t < res.x - Const::EPS)
                         res = Vector3(t, u, v), curve_id = i;
                     break;
                 }
@@ -55,9 +52,9 @@ Collision RotationBody::collide(const Vector3& start, const Vector3& dir) const
         Vector2 p = m_curves[curve_id].dP(res.y);
         Vector3 n = Vector3(-p.y * cos(res.z), -p.y * sin(res.z), p.x);
         if (n.dot(d) < Const::EPS)
-            return Collision(start, d, res.x, n, in, this);
+            return Collision(start, d, res.x, n, this);
         else
-            return Collision(start, d, res.x, -n, in, this);
+            return Collision(start, d, res.x, -n, this);
     }
     else
         return Collision();

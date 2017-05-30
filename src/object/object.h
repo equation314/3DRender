@@ -6,6 +6,7 @@
 
 class Plane;
 class Sphere;
+class Cylinder;
 class RotationBody;
 
 class Object
@@ -14,6 +15,7 @@ public:
     virtual ~Object();
 
     const Material* getMaterial() const { return m_material; }
+    virtual std::string getType() const = 0;
 
     // 与视线相交
     virtual Collision collide(const Vector3& start, const Vector3& dir) const = 0;

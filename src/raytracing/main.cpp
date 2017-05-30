@@ -1,16 +1,20 @@
 #include "raytracing/raytracer.h"
 #include "scene/scene.h"
 
-int main()
+int main(int argc, char* argv[])
 {
-    RayTracer* engine = new RayTracer();
-    Scene* scene = Scene::loadFrom("../scenes/scene2.json");
-    if (scene)
+    if (argc <= 1)
+        printf("Usage: ./raytracing <SCENE_FILE>\n");
+    else
     {
-        engine->run(scene);
-        delete scene;
+        RayTracer* engine = new RayTracer();
+        Scene* scene = Scene::loadFrom(argv[1]);
+        if (scene)
+        {
+            engine->run(scene, "output.bmp");
+            delete scene;
+        }
+        delete engine;
     }
-
-    delete engine;
     return 0;
 }

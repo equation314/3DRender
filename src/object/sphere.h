@@ -10,6 +10,8 @@ public:
     Sphere(const Vector3& o, double r, const Material* m = nullptr);
     Sphere(const Json::Value& object);
 
+    virtual std::string getType() const override { return "Sphere"; }
+
     // 与视线相交
     virtual Collision collide(const Vector3& start, const Vector3& dir) const override;
 

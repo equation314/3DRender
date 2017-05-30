@@ -23,6 +23,7 @@ public:
     double dot(const Vector2& B) const; // 点积
     double mod() const;                 // 模长
     double mod2() const;                // 模长平方
+    double arg() const;                 // 极角
 
     Vector2 unitize() const; // 单位化
 

@@ -10,6 +10,8 @@ public:
     Plane(const Vector3& n, double d, const Material* m = nullptr);
     Plane(const Json::Value& object);
 
+    virtual std::string getType() const override { return "Plane"; }
+
     // 与视线相交
     virtual Collision collide(const Vector3& start, const Vector3& dir) const override;
 

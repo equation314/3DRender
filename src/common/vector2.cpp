@@ -61,6 +61,11 @@ double Vector2::mod2() const
     return x * x + y * y;
 }
 
+double Vector2::arg() const
+{
+    return atan2(y, x);
+}
+
 Vector2 Vector2::unitize() const
 {
     double m = mod();

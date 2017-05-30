@@ -1,3 +1,4 @@
+#include "object/cylinder.h"
 #include "object/object.h"
 #include "object/plane.h"
 #include "object/rotationbody.h"
@@ -46,6 +47,8 @@ Object* Object::loadFromJson(const Json::Value& value)
         return new Plane(value);
     else if (type == "Sphere")
         return new Sphere(value);
+    else if (type == "Cylinder")
+        return new Cylinder(value);
     else if (type == "RotationBody")
         return new RotationBody(value);
     else

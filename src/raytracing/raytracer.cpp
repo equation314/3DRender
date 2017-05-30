@@ -9,7 +9,7 @@ const double MIN_WEIGHT = 0.05;
 const int MAX_DEPTH = 5;
 const int SPEC_POWER = 50;
 
-void RayTracer::run(Scene* scene)
+void RayTracer::run(Scene* scene, const std::string& outFile)
 {
     m_scene = scene;
     Camera* camera = scene->getCamera();
@@ -20,11 +20,11 @@ void RayTracer::run(Scene* scene)
         {
             if (!j) cout << "column " << i << endl;
             Vector3 dir = camera->emit(i, j);
-            Color color = m_rayTraceing(camera->getEye(), dir, 1, 1);
+            Color color = m_rayTraceing(camera->getEye(), dir, 1, 1, false);
             camera->setColor(i, j, color);
         }
 
-    camera->print("output.bmp");
+    camera->print(outFile.c_str());
 }
 
 Color RayTracer::m_calcLocalIllumination(const Collision& coll, const Material* material) const
@@ -48,28 +48,28 @@ Color RayTracer::m_calcLocalIllumination(const Collision& coll, const Material* 
     return ret;
 }
 
-Color RayTracer::m_calcReflection(const Collision& coll, const Material* material, double weight, int depth) const
+Color RayTracer::m_calcReflection(const Collision& coll, const Material* material, double weight, int depth, bool isInternal) const
 {
     Vector3 r = coll.ray_dir.reflect(coll.n);
-    Color ret = m_rayTraceing(coll.p, r, weight * material->refl, depth + 1);
+    Color ret = m_rayTraceing(coll.p, r, weight * material->refl, depth + 1, isInternal);
     return ret * (material->color * material->refl);
 }
 
-Color RayTracer::m_calcRefraction(const Collision& coll, const Material* material, double weight, int depth) const
+Color RayTracer::m_calcRefraction(const Collision& coll, const Material* material, double weight, int depth, bool isInternal) const
 {
     double rindex = material->rindex;
-    if (coll.is_internal) rindex = 1 / rindex;
+    if (isInternal) rindex = 1 / rindex;
     Vector3 r = coll.ray_dir.refract(coll.n, rindex);
     if (r.mod2() < Const::EPS) return Color();
 
-    Color ret = m_rayTraceing(coll.p, r, weight * material->refr, depth + 1);
-    if (!coll.is_internal)
+    Color ret = m_rayTraceing(coll.p, r, weight * material->refr, depth + 1, !isInternal);
+    if (!isInternal)
         return ret * material->refr;
     else
-        return ret * (material->absorb_color * -coll.dist).exp() * material->refr;
+        return ret * (material->absorb_color * -coll.dist).exp();
 }
 
-Color RayTracer::m_rayTraceing(const Vector3& start, const Vector3& dir, double weight, int depth) const
+Color RayTracer::m_rayTraceing(const Vector3& start, const Vector3& dir, double weight, int depth, bool isInternal) const
 {
     if (weight < MIN_WEIGHT) return m_scene->getAmbientLightColor();
     Collision coll = m_scene->findNearestCollision(start, dir);
@@ -84,9 +84,9 @@ Color RayTracer::m_rayTraceing(const Vector3& start, const Vector3& dir, double 
         if (obj->getMaterial()->diff > Const::EPS || obj->getMaterial()->spec > Const::EPS)
             ret += m_calcLocalIllumination(coll, obj->getMaterial());
         if (obj->getMaterial()->refl > Const::EPS)
-            ret += m_calcReflection(coll, obj->getMaterial(), weight, depth);
+            ret += m_calcReflection(coll, obj->getMaterial(), weight, depth, isInternal);
         if (obj->getMaterial()->refr > Const::EPS)
-            ret += m_calcRefraction(coll, obj->getMaterial(), weight, depth);
+            ret += m_calcRefraction(coll, obj->getMaterial(), weight, depth, isInternal);
 
         return ret.confine();
     }

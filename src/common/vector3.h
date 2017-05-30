@@ -1,6 +1,8 @@
 #ifndef VECTOR3_H
 #define VECTOR3_H
 
+#include "common/vector2.h"
+
 #include <ostream>
 #include <json/value.h>
 
@@ -25,6 +27,7 @@ public:
     double mod() const;                 // 模长
     double mod2() const;                // 模长平方
 
+    Vector2 toVector2() const;                              // 转为二维向量，忽略第 3 维
     Vector3 unitize() const;                                // 单位化
     Vector3 reflect(const Vector3& n) const;                // 反射
     Vector3 refract(const Vector3& n, double rindex) const; // 折射

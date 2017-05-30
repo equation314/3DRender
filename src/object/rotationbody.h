@@ -15,6 +15,8 @@ public:
     RotationBody(const Vector3& o, const Curves& curves = {}, const Material* m = nullptr);
     RotationBody(const Json::Value& object);
 
+    virtual std::string getType() const override { return "RotationBody"; }
+
     // 与视线相交
     virtual Collision collide(const Vector3& start, const Vector3& dir) const override;
 

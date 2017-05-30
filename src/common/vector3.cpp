@@ -66,6 +66,11 @@ double Vector3::mod2() const
     return x * x + y * y + z * z;
 }
 
+Vector2 Vector3::toVector2() const
+{
+    return Vector2(x, y);
+}
+
 Vector3 Vector3::unitize() const
 {
     double m = mod();
