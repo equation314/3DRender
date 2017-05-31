@@ -24,26 +24,25 @@ Collision Sphere::collide(const Vector3& start, const Vector3& dir) const
         if (t1 > Const::EPS)
         {
             Vector3 p = start + d * t1;
-            return Collision(start, d, t1, p - m_o, this);
+            return Collision(start, d, t1, p - m_o, this, false);
         }
         else if (t2 > Const::EPS)
         {
             Vector3 p = start + d * t2;
-            return Collision(start, d, t2, m_o - p, this);
+            return Collision(start, d, t2, m_o - p, this, true);
         }
     }
 
     return Collision();
 }
 
-Color Sphere::getTextureColor(const Vector3& p) const
+Color Sphere::getTextureColor(const Collision& coll) const
 {
     if (m_material->hasTexture())
     {
-        Vector3 n = (p - m_o).unitize();
-        double b = acos(n.dot(m_dz)), a = acos(std::min(std::max(n.dot(m_dx) / sin(b), -1.0), 1.0));
+        double b = acos(coll.n.dot(m_dz)), a = acos(std::min(std::max(coll.n.dot(m_dx) / sin(b), -1.0), 1.0));
         double v = b / Const::PI, u = a / 2 / Const::PI;
-        if (n.dot(m_dz * m_dx) < 0) u = 1 - u;
+        if (coll.n.dot(m_dz * m_dx) < 0) u = 1 - u;
         return m_material->getTextureColor(u, v);
     }
     else

@@ -31,12 +31,12 @@ Collision Plane::collide(const Vector3& start, const Vector3& dir) const
         return Collision(start, dir, t, -m_n, this);
 }
 
-Color Plane::getTextureColor(const Vector3& p) const
+Color Plane::getTextureColor(const Collision& coll) const
 {
     if (m_material->hasTexture())
     {
-        double u = (p - m_o).dot(m_dx) / m_dx.mod2(),
-               v = (p - m_o).dot(m_dy) / m_dy.mod2();
+        double u = (coll.p - m_o).dot(m_dx) / m_dx.mod2(),
+               v = (coll.p - m_o).dot(m_dy) / m_dy.mod2();
         u -= floor(u), v -= floor(v);
         return m_material->getTextureColor(u, v);
     }

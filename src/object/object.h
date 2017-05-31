@@ -20,8 +20,8 @@ public:
     // 与视线相交
     virtual Collision collide(const Vector3& start, const Vector3& dir) const = 0;
 
-    // 某点的纹理颜色
-    virtual Color getTextureColor(const Vector3& p) const = 0;
+    // 交点处的纹理颜色
+    virtual Color getTextureColor(const Collision& coll) const = 0;
 
     // 保存为 JSON 格式
     virtual Json::Value toJson() const;

@@ -30,7 +30,7 @@ void RayTracer::run(Scene* scene, const std::string& outFile)
 Color RayTracer::m_calcLocalIllumination(const Collision& coll, const Material* material) const
 {
     Vector3 r = coll.ray_dir.reflect(coll.n);
-    Color color = material->color * coll.object->getTextureColor(coll.p);
+    Color color = material->color * coll.object->getTextureColor(coll);
     Color ret = color * m_scene->getAmbientLightColor() * material->diff; // 环境光
     for (auto light = m_scene->lightsBegin(); light != m_scene->lightsEnd(); light++)
     {
@@ -81,12 +81,13 @@ Color RayTracer::m_rayTraceing(const Vector3& start, const Vector3& dir, double 
     {
         Color ret;
         const Object* obj = coll.object;
-        if (obj->getMaterial()->diff > Const::EPS || obj->getMaterial()->spec > Const::EPS)
-            ret += m_calcLocalIllumination(coll, obj->getMaterial());
-        if (obj->getMaterial()->refl > Const::EPS)
-            ret += m_calcReflection(coll, obj->getMaterial(), weight, depth, isInternal);
-        if (obj->getMaterial()->refr > Const::EPS)
-            ret += m_calcRefraction(coll, obj->getMaterial(), weight, depth, isInternal);
+        const Material* material = obj->getMaterial();
+        if (material->diff > Const::EPS || material->spec > Const::EPS)
+            ret += m_calcLocalIllumination(coll, material);
+        if (material->refl > Const::EPS)
+            ret += m_calcReflection(coll, material, weight, depth, isInternal);
+        if (material->refr > Const::EPS)
+            ret += m_calcRefraction(coll, material, weight, depth, isInternal);
 
         return ret.confine();
     }

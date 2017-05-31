@@ -23,21 +23,21 @@ Collision Cylinder::collide(const Vector3& start, const Vector3& dir) const
     // 与两个底面求交
     if (abs(d3.z) > -Const::EPS)
     {
-        double t1 = (m_o.z - start.z) / d3.z, t2 = (m_o.z + m_h - start.z) / d3.z;
-        if (t1 > t2) swap(t1, t2);
+        double t1 = (m_o.z - start.z) / d3.z, t2 = (m_o.z + m_h - start.z) / d3.z, u1 = 0, u2 = 1;
+        if (t1 > t2) swap(t1, t2), swap(u1, u2);
         if (t1 > Const::EPS) // 若射线和第一个底面相交，直接返回
         {
             Vector3 p = start + d3 * t1;
             Vector2 q = (p - m_o).toVector2();
             if (q.mod2() < m_r * m_r + Const::EPS)
-                return Collision(start, d3, t1, Vector3(0, 0, -d3.z), this);
+                return Collision(start, d3, t1, u1, q.arg(), Vector3(0, 0, -d3.z), this, in);
         }
         else if (t2 > Const::EPS) // 若射线和第二个底面相交，且射线起点在圆柱体内，也直接返回
         {
             Vector3 p = start + d3 * t2;
             Vector2 q = (p - m_o).toVector2();
             if (q.mod2() < m_r * m_r + Const::EPS && in)
-                return Collision(start, d3, t2, Vector3(0, 0, -d3.z), this);
+                return Collision(start, d3, t2, u2, q.arg(), Vector3(0, 0, -d3.z), this, in);
         }
         else // 若射线不和上下底面所在的平面相交，则无交点
             return Collision();
@@ -56,24 +56,23 @@ Collision Cylinder::collide(const Vector3& start, const Vector3& dir) const
         else
             t = t2;
     }
-
     if (t > Const::EPS)
     {
         t /= d2.mod();
         Vector3 p = start + d3 * t;
         if (m_o.z < p.z + Const::EPS && p.z < m_o.z + m_h + Const::EPS)
-            return Collision(start, d3, t, Vector3(p.x - m_o.x, p.y - m_o.y, 0) * (in ? -1 : 1), this);
+            return Collision(start, d3, t, (p.z - m_o.z) / m_h, (p - m_o).toVector2().arg(),
+                             Vector3(p.x - m_o.x, p.y - m_o.y, 0) * (in ? -1 : 1), this, in);
     }
-    else
-        return Collision();
+    return Collision();
 }
 
-Color Cylinder::getTextureColor(const Vector3& p) const
+Color Cylinder::getTextureColor(const Collision& coll) const
 {
     if (m_material->hasTexture())
     {
-        double u = fmod((p - m_o).toVector2().arg() - m_arg + 2 * Const::PI, 2 * Const::PI) / 2 / Const::PI,
-               v = 1 - (p.z - m_o.z) / m_h;
+        double u = fmod(coll.v - m_arg + 4 * Const::PI, 2 * Const::PI) / 2 / Const::PI,
+               v = 1 - coll.u;
         return m_material->getTextureColor(u, v);
     }
     else
