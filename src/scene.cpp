@@ -14,8 +14,8 @@
 #include <json/reader.h>
 #include <json/writer.h>
 
-Scene::Scene()
-    : m_camera(new Camera()), m_ambient_color(Color())
+Scene::Scene(Camera* camera)
+    : m_camera(camera), m_ambient_color(Color())
 {
     m_init();
 }

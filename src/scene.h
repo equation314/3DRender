@@ -12,7 +12,7 @@ class Collision;
 class Scene
 {
 public:
-    Scene();
+    Scene(Camera* camera);
     Scene(const Json::Value& scene);
     ~Scene();
 
