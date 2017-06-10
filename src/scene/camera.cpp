@@ -1,6 +1,6 @@
-#include "camera.h"
 #include "common/bmp.h"
 #include "common/const.h"
+#include "scene/camera.h"
 
 Camera::Camera(const Vector3& eye, const Vector3& lookAt, const Vector3& up, int w, int h, double fovy)
     : m_eye(eye), m_look_at(lookAt), m_dir(lookAt - eye), m_up(up),

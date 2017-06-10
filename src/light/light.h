@@ -1,8 +1,8 @@
 #ifndef LIGHT_H
 #define LIGHT_H
 
-#include "collision.h"
 #include "common/color.h"
+#include "object/collision.h"
 
 class Scene;
 class PointLight;
@@ -27,7 +27,11 @@ public:
     // 计算阴影比例，值越小阴影越深
     virtual double getShadowRatio(const Scene* scene, const Vector3& p) const = 0;
 
+    // 保存为 JSON 格式
     virtual Json::Value toJson() const;
+
+    // 从 JSON 导入物体
+    static Light* loadFromJson(const Json::Value& value);
 
 protected:
     Color m_color;

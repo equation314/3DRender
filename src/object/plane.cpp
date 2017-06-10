@@ -1,7 +1,7 @@
 #include "common/const.h"
 #include "object/plane.h"
 
-Plane::Plane(const Material* m, const Vector3& n, double d)
+Plane::Plane(const Vector3& n, double d, const Material* m)
     : Object(m), m_n(n.unitize()), m_d(d),
       m_o(0, 0, 0)
 {
@@ -26,17 +26,17 @@ Collision Plane::collide(const Vector3& start, const Vector3& dir) const
     double t = -n / d;
     if (t < Const::EPS) return Collision();
     if (n > Const::EPS)
-        return Collision(start, dir, t, m_n, false, this);
+        return Collision(start, dir, t, m_n, this);
     else
-        return Collision(start, dir, t, -m_n, true, this);
+        return Collision(start, dir, t, -m_n, this);
 }
 
-Color Plane::getTextureColor(const Vector3& p) const
+Color Plane::getTextureColor(const Collision& coll) const
 {
     if (m_material->hasTexture())
     {
-        double u = (p - m_o).dot(m_dx) / m_dx.mod2(),
-               v = (p - m_o).dot(m_dy) / m_dy.mod2();
+        double u = (coll.p - m_o).dot(m_dx) / m_dx.mod2(),
+               v = (coll.p - m_o).dot(m_dy) / m_dy.mod2();
         u -= floor(u), v -= floor(v);
         return m_material->getTextureColor(u, v);
     }

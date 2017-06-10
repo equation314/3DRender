@@ -1,13 +1,12 @@
 #ifndef SCENE_H
 #define SCENE_H
 
-#include "camera.h"
-#include "light/light.h"
-#include "object/object.h"
-
 #include <vector>
 
+class Camera;
 class Collision;
+class Light;
+class Object;
 
 class Scene
 {
@@ -38,7 +37,7 @@ public:
     // 保存 JSON 到文件
     void save(const std::string& file) const;
 
-    // 导入场景
+    // 从文件导入场景
     static Scene* loadFrom(const std::string& file);
 
 private:
@@ -47,6 +46,8 @@ private:
 
     std::vector<Light*> m_lights;
     std::vector<Object*> m_objects;
+
+    static std::string m_scene_file_dir; // 场景文件路径
 
     void m_init();
 };
