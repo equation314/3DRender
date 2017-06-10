@@ -16,12 +16,14 @@ public:
     friend Color operator+(const Color& A, const Color& B);
     friend Color operator-(const Color& A, const Color& B);
     friend Color operator*(const Color& A, const Color& B);
+    Color operator*(double k) const;
+    Color operator/(double k) const;
     friend std::ostream& operator<<(std::ostream& out, const Color& c);
     Color& operator+=(const Color& B);
     Color& operator-=(const Color& B);
     Color& operator*=(const Color& B);
-    Color operator*(double k) const;
-    Color operator/(double k) const;
+    Color& operator*=(double k);
+    Color& operator/=(double k);
     Color inverse() const;
     Color exp() const;
     Color confine() const;

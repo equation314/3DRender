@@ -3,14 +3,14 @@
 #include "scene/camera.h"
 
 Camera::Camera(const Vector3& eye, const Vector3& lookAt, const Vector3& up, int w, int h, double fovy)
-    : m_eye(eye), m_look_at(lookAt), m_dir(lookAt - eye), m_up(up),
+    : m_eye(eye), m_look_at(lookAt), m_dir((lookAt - eye).unitize()), m_up(up),
       m_w(w), m_h(h), m_fovy(fovy * Const::PI / 180)
 {
     m_init();
 }
 
 Camera::Camera(const Json::Value& camera)
-    : m_eye(camera["eye"]), m_look_at(camera["look_at"]), m_dir(m_look_at - m_eye), m_up(camera["up"]),
+    : m_eye(camera["eye"]), m_look_at(camera["look_at"]), m_dir((m_look_at - m_eye).unitize()), m_up(camera["up"]),
       m_w(camera["w"].asInt()), m_h(camera["h"].asInt()),
       m_fovy(camera["fovy"].asDouble() * Const::PI / 180)
 {

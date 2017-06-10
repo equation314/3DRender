@@ -6,7 +6,7 @@
 #include "scene/scene.h"
 
 const double MIN_WEIGHT = 0.05;
-const int MAX_DEPTH = 5;
+const int MAX_DEPTH = 20;
 const int SPEC_POWER = 50;
 
 void RayTracer::run(Scene* scene, const std::string& outFile)
@@ -48,27 +48,6 @@ Color RayTracer::m_calcLocalIllumination(const Collision& coll, const Material* 
     return ret;
 }
 
-Color RayTracer::m_calcReflection(const Collision& coll, const Material* material, double weight, int depth, bool isInternal) const
-{
-    Vector3 r = coll.ray_dir.reflect(coll.n);
-    Color ret = m_rayTraceing(coll.p, r, weight * material->refl, depth + 1, isInternal);
-    return ret * (material->color * material->refl);
-}
-
-Color RayTracer::m_calcRefraction(const Collision& coll, const Material* material, double weight, int depth, bool isInternal) const
-{
-    double rindex = material->rindex;
-    if (isInternal) rindex = 1 / rindex;
-    Vector3 r = coll.ray_dir.refract(coll.n, rindex);
-    if (r.mod2() < Const::EPS) return Color();
-
-    Color ret = m_rayTraceing(coll.p, r, weight * material->refr, depth + 1, !isInternal);
-    if (!isInternal)
-        return ret * material->refr;
-    else
-        return ret * (material->absorb_color * -coll.dist).exp();
-}
-
 Color RayTracer::m_rayTraceing(const Vector3& start, const Vector3& dir, double weight, int depth, bool isInternal) const
 {
     if (weight < MIN_WEIGHT) return m_scene->getAmbientLightColor();
@@ -82,15 +61,44 @@ Color RayTracer::m_rayTraceing(const Vector3& start, const Vector3& dir, double 
         Color ret;
         const Object* obj = coll.object;
         const Material* material = obj->getMaterial();
+
         if (material->diff > Const::EPS || material->spec > Const::EPS)
             ret += m_calcLocalIllumination(coll, material);
-        if (material->refl > Const::EPS)
-            ret += m_calcReflection(coll, material, weight, depth, isInternal);
-        if (material->refr > Const::EPS)
-            ret += m_calcRefraction(coll, material, weight, depth, isInternal);
+        if (material->refl > Const::EPS || material->refr > Const::EPS)
+        {
+            double n = material->rindex;
+            if (isInternal) n = 1 / n;
+            Vector3 refl = coll.ray_dir.reflect(coll.n);
+            Vector3 refr = coll.ray_dir.refract(coll.n, n);
+            if (material->refr < Const::EPS) // 全镜面反射
+                ret += m_rayTraceing(coll.p, refl, weight * material->refl, depth + 1, isInternal) * (material->color * material->refl);
+            else if (refr.mod2() < Const::EPS) // 全反射
+            {
+                double k = (material->refl + material->refr) / 2;
+                ret += m_rayTraceing(coll.p, refl, weight * k, depth + 1, isInternal) * (material->color * k);
+            }
+            else if (material->refl < Const::EPS) // 全透射
+                ret += m_rayTraceing(coll.p, refr, weight * material->refr, depth + 1, !isInternal) * material->refr;
+            else
+            {
+                // Fresnel equations
+                double cosI = -coll.ray_dir.dot(coll.n), cosT = sqrt(1 - (1 - cosI * cosI) / n / n);
+                double r1 = (cosI * n - cosT) / (cosI * n + cosT),
+                       r2 = (cosI - cosT * n) / (cosI + cosT * n);
+                double kl = (r1 * r1 + r2 * r2) / 2, kr = 1 - kl;
+                kl *= material->refl, kr *= material->refr;
+
+                if (kl > Const::EPS) ret += m_rayTraceing(coll.p, refl, weight * kl, depth + 1, isInternal) * (material->color * kl);
+                if (kr > Const::EPS) ret += m_rayTraceing(coll.p, refr, weight * kr, depth + 1, !isInternal) * kr;
+            }
+        }
+
+        // 透明材质的颜色过滤
+        if (isInternal)
+            ret *= (material->absorb_color * -coll.dist).exp();
 
         return ret.confine();
     }
     else
-        return m_scene->getAmbientLightColor();
+        return Color();
 }

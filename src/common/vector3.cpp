@@ -84,12 +84,12 @@ Vector3 Vector3::reflect(const Vector3& n) const
 
 Vector3 Vector3::refract(const Vector3& n, double rindex) const
 {
-    double ni = 1 / rindex; // 折射率的倒数，nT/ni
-    double cosi = this->dot(n), cosT2 = 1 - ni * ni * (1 - cosi * cosi);
-    if (cosT2 < Const::EPS)
-        return Vector3();
+    double ni = 1 / rindex; // 折射率的倒数，nT/nI
+    double cosI = this->dot(n), cosT2 = 1 - ni * ni * (1 - cosI * cosI);
+    if (cosT2 >= 0)
+        return (*this) * ni - n * (sqrt(cosT2) + cosI * ni);
     else
-        return (*this) * ni - n * (sqrt(cosT2) + cosi * ni);
+        return Vector3();
 }
 
 Json::Value Vector3::toJson() const

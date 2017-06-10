@@ -26,11 +26,6 @@ Color operator*(const Color& A, const Color& B)
     return Color(A.r * B.r, A.g * B.g, A.b * B.b);
 }
 
-std::ostream& operator<<(std::ostream& out, const Color& c)
-{
-    return out << '(' << c.r << ' ' << c.g << ' ' << c.b << ')';
-}
-
 Color Color::operator*(double k) const
 {
     return Color(r * k, g * k, b * k);
@@ -39,6 +34,11 @@ Color Color::operator*(double k) const
 Color Color::operator/(double k) const
 {
     return Color(r / k, g / k, b / k);
+}
+
+std::ostream& operator<<(std::ostream& out, const Color& c)
+{
+    return out << '(' << c.r << ' ' << c.g << ' ' << c.b << ')';
 }
 
 Color& Color::operator+=(const Color& B)
@@ -54,6 +54,18 @@ Color& Color::operator-=(const Color& B)
 Color& Color::operator*=(const Color& B)
 {
     return *this = *this * B;
+}
+
+Color& Color::operator*=(double k)
+{
+    r *= k, g *= k, b *= k;
+    return *this;
+}
+
+Color& Color::operator/=(double k)
+{
+    r /= k, g /= k, b /= k;
+    return *this;
 }
 
 Color Color::inverse() const

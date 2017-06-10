@@ -48,7 +48,7 @@ Collision Cylinder::collide(const Vector3& start, const Vector3& dir) const
 
     // 否则第一个交点为圆柱面
     double tca = oc.dot(d2.unitize()), thc2 = m_r * m_r - oc.mod2() + tca * tca;
-    if (thc2 > Const::EPS)
+    if (thc2 >= 0)
     {
         double thc = sqrt(thc2), t1 = tca - thc, t2 = tca + thc;
         if (t1 > Const::EPS)
