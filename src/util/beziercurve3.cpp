@@ -1,4 +1,4 @@
-#include "curve/beziercurve3.h"
+#include "util/beziercurve3.h"
 
 BezierCurve3::BezierCurve3(const Vector2& p0, const Vector2& p1, const Vector2& p2, const Vector2& p3)
     : P0(p0), P1(p1), P2(p2), P3(p3),
@@ -32,6 +32,14 @@ Vector2 BezierCurve3::dP(double t) const
            b = d * 3 - 12 * t + 3,
            c = -a - b - d;
     return P0 * a + P1 * b + P2 * c + P3 * d;
+}
+
+void BezierCurve3::getEquation(Vector2& q0, Vector2& q1, Vector2& q2, Vector2& q3) const
+{
+    q0 = P0;
+    q1 = (P1 - P0) * 3;
+    q2 = (P2 - P1 * 2 + P0) * 3;
+    q3 = P3 - (P2 - P1) * 3 - P0;
 }
 
 Json::Value BezierCurve3::toJson() const

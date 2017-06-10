@@ -2,8 +2,8 @@
 #define ROTATIONBODY_H
 
 #include "common/vector3.h"
-#include "curve/beziercurve3.h"
 #include "object/object.h"
+#include "util/beziercurve3.h"
 
 #include <vector>
 

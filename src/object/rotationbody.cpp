@@ -1,6 +1,7 @@
 #include "common/const.h"
 #include "object/cylinder.h"
 #include "object/rotationbody.h"
+#include "util/polynomial6.h"
 
 const int SUBSURFACE_NUM = 32;
 const int ITERATION_NUM = 20;
@@ -32,7 +33,7 @@ Collision RotationBody::collide(const Vector3& start, const Vector3& dir) const
 {
     Vector3 d = dir.unitize();
     int curve_id = 0;
-    Vector3 res(1e9, 0, 0);
+    Vector2 res(1e9, 0);
 
     Collision coll = m_bounding_cylinder->collide(start, d);
     if (!coll.isHit()) return Collision();
@@ -41,41 +42,57 @@ Collision RotationBody::collide(const Vector3& start, const Vector3& dir) const
     {
         coll = m_sub_cylinders[i]->collide(start, d);
         if (!coll.isHit() || (!coll.is_internal && coll.dist > res.x - Const::EPS)) continue;
-        double t, u, v, len = 2 * Const::PI / SUBSURFACE_NUM, f;
 
-        for (int j = 0; j < SUBSURFACE_NUM; j++)
+        Vector3 o = start - m_o;
+        Vector2 w = d.toVector2(), q0, q1, q2, q3;
+        // A.y^2 + B.y + C + D.x^2 = 0
+        long double A = w.mod2(), B = 2 * w.dot(o.toVector2()) * d.z - 2 * o.z * A,
+                    C = Vector2(o.z * d.x - o.x * d.z, o.z * d.y - o.y * d.z).mod2(), D = -d.z * d.z,
+                    a[7];
+
+        // a0 + a1.u + a2.u^2 + a3.u^3 + a4.u^4 + a5.u^5 + a6.u^6 = 0
+        m_curves[i].getEquation(q0, q1, q2, q3);
+        a[0] = A * q0.y * q0.y + D * q0.x * q0.x + C + B * q0.y;
+        a[1] = 2 * A * q0.y * q1.y + 2 * D * q0.x * q1.x + B * q1.y;
+        a[2] = A * (q1.y * q1.y + 2 * q0.y * q2.y) + D * (q1.x * q1.x + 2 * q0.x * q2.x) + B * q2.y;
+        a[3] = 2 * A * (q0.y * q3.y + q1.y * q2.y) + 2 * D * (q0.x * q3.x + q1.x * q2.x) + B * q3.y;
+        a[4] = A * (2 * q1.y * q3.y + q2.y * q2.y) + D * (2 * q1.x * q3.x + q2.x * q2.x);
+        a[5] = 2 * (A * q2.y * q3.y + D * q2.x * q3.x);
+        a[6] = A * q3.y * q3.y + D * q3.x * q3.x;
+
+        Polynomial6 poly(a);
+        std::vector<double> roots = poly.findAllRoots(0, 1);
+        for (auto u : roots)
         {
-            t = coll.dist, u = 0.5, v = j * len + Const::randDouble();
-            for (int s = 0; s < ITERATION_NUM; s++)
+            double t = -1;
+            Vector2 p = m_curves[i].P(u);
+            if (abs(d.z) > Const::EPS)
+                t = (p.y - o.z) / d.z;
+            else
             {
-                Vector3 F = start + d * t - P(i, u, v),
-                        dPdu = m_dPdu(i, u, v),
-                        dPdv = m_dPdv(i, u, v);
-                double D = Vector3::mix(d, dPdu, dPdv);
-                if (abs(D) < Const::EPS) break;
-
-                double dt = Vector3::mix(F, dPdu, dPdv) / D,
-                       du = Vector3::mix(d, F, dPdv) / D,
-                       dv = Vector3::mix(d, dPdu, F) / D;
-                f = F.mod2(), t -= dt, u += du, v += dv;
-                if (f < 1e-10 && u > -Const::EPS && u < 1 + Const::EPS)
+                Vector2 oc = -o.toVector2();
+                double tca = oc.dot(w), thc2 = p.x * p.x - oc.mod2() + tca * tca;
+                if (thc2 > -Const::EPS)
                 {
-                    if (t > Const::EPS && t < res.x - Const::EPS)
-                        res = Vector3(t, u, v), curve_id = i;
-                    break;
+                    double thc = sqrt(thc2), A = tca - thc, B = tca + thc;
+                    if (A > Const::EPS)
+                        t = A;
+                    else
+                        t = B;
                 }
-                if (abs(dt) < Const::EPS && abs(du) < Const::EPS && abs(dv) < Const::EPS) break;
             }
+            if (t > 1e-4 && t < res.x - Const::EPS)
+                res = Vector2(t, u), curve_id = i;
         }
     }
     if (res.x < 1e9)
     {
-        Vector2 p = m_curves[curve_id].dP(res.y);
-        Vector3 n = Vector3(-p.y * cos(res.z), -p.y * sin(res.z), p.x);
+        Vector2 v = (start - m_o + d * res.x).toVector2().unitize(), dp = m_curves[curve_id].dP(res.y);
+        Vector3 n = Vector3(-dp.y * v.x, -dp.y * v.y, dp.x);
         if (n.dot(d) < Const::EPS)
-            return Collision(start, d, res.x, curve_id + res.y, fmod(res.z, 2 * Const::PI), n, this);
+            return Collision(start, d, res.x, curve_id + res.y, fmod(v.arg(), 2 * Const::PI), n, this);
         else
-            return Collision(start, d, res.x, curve_id + res.y, fmod(res.z, 2 * Const::PI), -n, this);
+            return Collision(start, d, res.x, curve_id + res.y, fmod(v.arg(), 2 * Const::PI), -n, this);
     }
     else
         return Collision();

@@ -36,12 +36,12 @@
 	{
 		"absorb_color" : "(1, 1, 1)",
 		"color" : "(1, 1, 1)",
-		"diff" : 0.8,
+		"diff" : 0,
 		"refl" : 0.2,
-		"refr" : 0,
+		"refr" : 0.8,
 		"refr_index" : 1.5,
-		"spec" : 0.2,
-		"texture": "../textures/marble.bmp"
+		"spec" : 0.2
+		// "texture": "../textures/marble.bmp"
 	},
 	"o" : "(-0.1, 0, -0.99999)",
 	"r" : 0.75,

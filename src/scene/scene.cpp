@@ -1,4 +1,3 @@
-#include "common/bmp.h"
 #include "common/const.h"
 #include "light/light.h"
 #include "light/pointlight.h"
