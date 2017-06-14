@@ -50,12 +50,12 @@ int Polynomial6::rootCount(long double l, long double r)
             fl = fl * l + m_sturm[i][j];
             fr = fr * r + m_sturm[i][j];
         }
-        if (abs(fl) > 1e-14)
+        if (fl != 0)
         {
             if (fl * gl < 0) s++;
             gl = fl;
         }
-        if (abs(fr) > 1e-14)
+        if (fr != 0)
         {
             if (fr * gr < 0) s--;
             gr = fr;
@@ -78,7 +78,7 @@ void Polynomial6::m_init()
                     b = (m_sturm[i - 2][7 - i] - a * m_sturm[i - 1][6 - i]) / m_sturm[i - 1][7 - i];
         for (int j = 0; j < 7 - i; j++)
             m_sturm[i][j] = (j ? a * m_sturm[i - 1][j - 1] : 0) + b * m_sturm[i - 1][j] - m_sturm[i - 2][j];
-        if (abs(m_sturm[i][6 - i]) < 1e-14)
+        if (m_sturm[i][6 - i] == 0)
         {
             for (int j = 0; j < 7 - i; j++) m_sturm[i][j] = 0;
             break;
