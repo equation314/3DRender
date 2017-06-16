@@ -27,6 +27,7 @@ public:
     Color inverse() const;
     Color exp() const;
     Color confine() const;
+    double power() const;
 
     Json::Value toJson() const;
 

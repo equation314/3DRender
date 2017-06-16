@@ -17,10 +17,16 @@ aux_source_directory(scene SCENE_SRCS)
 add_library(scene ${SCENE_SRCS})
 target_link_libraries(scene object light common)
 
-aux_source_directory(raytracing RAY_TRACING_SRCS)
-add_executable(raytracing ${RAY_TRACING_SRCS})
-target_link_libraries(raytracing scene jsoncpp_lib_static)
+
 
 aux_source_directory(modeling MODELING)
 add_executable(modeling ${MODELING})
 target_link_libraries(modeling object jsoncpp_lib_static)
+
+aux_source_directory(raytracing RAY_TRACING_SRCS)
+add_executable(ray_tracing ${RAY_TRACING_SRCS})
+target_link_libraries(ray_tracing scene jsoncpp_lib_static)
+
+aux_source_directory(photonmapping PHOTON_MAPPING_SRCS)
+add_executable(photon_mapping ${PHOTON_MAPPING_SRCS})
+target_link_libraries(photon_mapping scene jsoncpp_lib_static)

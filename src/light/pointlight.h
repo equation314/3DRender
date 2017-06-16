@@ -21,6 +21,9 @@ public:
     // 计算阴影比例
     virtual double getShadowRatio(const Scene* scene, const Vector3& p) const override;
 
+    // 发射光子
+    virtual Photon emitPhoton(double power) const override;
+
     virtual Json::Value toJson() const override;
 
 private:

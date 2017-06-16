@@ -26,11 +26,16 @@ public:
     double dot(const Vector3& B) const; // 点积
     double mod() const;                 // 模长
     double mod2() const;                // 模长平方
+    double& operator[](int id);         // 坐标分量
+    const double operator[](int id) const;
 
     Vector2 toVector2() const;                              // 转为二维向量，忽略第 3 维
     Vector3 unitize() const;                                // 单位化
+    Vector3 diffuse() const;                                // 散射
     Vector3 reflect(const Vector3& n) const;                // 反射
     Vector3 refract(const Vector3& n, double rindex) const; // 折射
+    Vector3 getAnVerticalVector() const;                    // 任意一个与自己垂直的向量
+    static Vector3 randVector();                            // 随机单位向量
 
     Json::Value toJson() const;
 

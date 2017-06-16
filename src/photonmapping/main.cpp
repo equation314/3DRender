@@ -1,13 +1,14 @@
-#include "raytracing/raytracer.h"
+#include "object/sphere.h"
+#include "photonmapping/photonmapper.h"
 #include "scene/scene.h"
 
 int main(int argc, char* argv[])
 {
     if (argc <= 1)
-        printf("Usage: ./ray_tracing <SCENE_FILE>\n");
+        printf("Usage: ./photon_mapping <SCENE_FILE>\n");
     else
     {
-        RayTracer* engine = new RayTracer();
+        PhotonMapper* engine = new PhotonMapper();
         Scene* scene = Scene::loadFrom(argv[1]);
         if (scene)
         {

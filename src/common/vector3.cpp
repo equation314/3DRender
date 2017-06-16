@@ -66,6 +66,16 @@ double Vector3::mod2() const
     return x * x + y * y + z * z;
 }
 
+double& Vector3::operator[](int id)
+{
+    return !id ? x : id == 1 ? y : z;
+}
+
+const double Vector3::operator[](int id) const
+{
+    return !id ? x : id == 1 ? y : z;
+}
+
 Vector2 Vector3::toVector2() const
 {
     return Vector2(x, y);
@@ -75,6 +85,14 @@ Vector3 Vector3::unitize() const
 {
     double m = mod();
     return *(this) / (m < Const::EPS ? 1 : m);
+}
+
+Vector3 Vector3::diffuse() const
+{
+    double theta = acos(sqrt(Const::randDouble())), phi = 2 * Const::PI * Const::randDouble();
+    Vector3 dir(cos(phi) * sin(theta), sin(phi) * sin(theta), cos(theta));
+    Vector3 dx = getAnVerticalVector(), dy = (*this) * (dx);
+    return dx * dir.x + dy * dir.y + operator*(dir.z);
 }
 
 Vector3 Vector3::reflect(const Vector3& n) const
@@ -90,6 +108,26 @@ Vector3 Vector3::refract(const Vector3& n, double rindex) const
         return (*this) * ni - n * (sqrt(cosT2) + cosI * ni);
     else
         return Vector3();
+}
+
+Vector3 Vector3::getAnVerticalVector() const
+{
+    Vector3 v = (*this) * (Vector3(0, 0, 1));
+    if (v.mod2() < Const::EPS) v = (*this) * (Vector3(1, 0, 0));
+    return v.unitize();
+}
+
+Vector3 Vector3::randVector()
+{
+    Vector3 v;
+    for (;;)
+    {
+        v.x = 2 * Const::randDouble() - 1;
+        v.y = 2 * Const::randDouble() - 1;
+        v.z = 2 * Const::randDouble() - 1;
+        if (v.mod2() > Const::EPS && v.mod2() < 1 + Const::EPS) break;
+    }
+    return v.unitize();
 }
 
 Json::Value Vector3::toJson() const

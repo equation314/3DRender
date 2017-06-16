@@ -2,6 +2,7 @@
 #define LIGHT_H
 
 #include "common/color.h"
+#include "common/photon.h"
 #include "object/collision.h"
 
 class Scene;
@@ -26,6 +27,9 @@ public:
 
     // 计算阴影比例，值越小阴影越深
     virtual double getShadowRatio(const Scene* scene, const Vector3& p) const = 0;
+
+    // 发射光子
+    virtual Photon emitPhoton(double power) const = 0;
 
     // 保存为 JSON 格式
     virtual Json::Value toJson() const;

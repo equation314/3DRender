@@ -83,6 +83,11 @@ Color Color::confine() const
     return Color(std::max(std::min(r, 1.0), 0.0), std::max(std::min(g, 1.0), 0.0), std::max(std::min(b, 1.0), 0.0));
 }
 
+double Color::power() const
+{
+    return (r + g + b) / 3;
+}
+
 Json::Value Color::toJson() const
 {
     char str[256];

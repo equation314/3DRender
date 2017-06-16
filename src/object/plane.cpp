@@ -3,14 +3,8 @@
 
 Plane::Plane(const Vector3& n, double d, const Material* m)
     : Object(m), m_n(n.unitize()), m_d(d),
-      m_o(0, 0, 0)
+      m_o(0, 0, 0), m_dx(n.getAnVerticalVector()), m_dy((n * m_dx).unitize())
 {
-    m_dx = m_n * Vector3(0, 0, -1);
-    if (m_dx.mod2() < Const::EPS)
-        m_dx = Vector3(1, 0, 0);
-    else
-        m_dx = m_dx.unitize();
-    m_dy = (m_dx * m_n).unitize();
 }
 
 Plane::Plane(const Json::Value& object)
