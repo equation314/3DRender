@@ -7,11 +7,13 @@
 #include "scene/camera.h"
 #include "scene/scene.h"
 
+#define PHOTON_MAP_ONLY // 只使用光子图渲染
+
 const double MIN_WEIGHT = 0.05;
 const int MAX_DEPTH = 20;
 const int SPEC_POWER = 50;
-const int PHOTON_NUMBER = 1000000;
-const int PHOTON_SAMPLES = 500;
+const int PHOTON_NUMBER = 5000000;
+const int PHOTON_SAMPLES = 10000;
 
 void PhotonMapper::run(Scene* scene, const std::string& outFile)
 {
@@ -24,6 +26,7 @@ void PhotonMapper::run(Scene* scene, const std::string& outFile)
     delete tracer;
 
     for (int i = 0; i < w; i++)
+    {
         for (int j = 0; j < h; j++)
         {
             if (!j) cout << "column " << i << endl;
@@ -31,9 +34,10 @@ void PhotonMapper::run(Scene* scene, const std::string& outFile)
             Color color = m_rayTraceing(camera->getEye(), dir, 1, 1, false);
             camera->setColor(i, j, color);
         }
+        if (i % 10 == 0) camera->print(outFile.c_str());
+    }
 
     delete m_map;
-    camera->print(outFile.c_str());
 }
 
 Color PhotonMapper::m_calcLocalIllumination(const Collision& coll, const Material* material) const
@@ -41,11 +45,13 @@ Color PhotonMapper::m_calcLocalIllumination(const Collision& coll, const Materia
     Vector3 r = coll.ray_dir.reflect(coll.n);
     Color color = material->color * coll.object->getTextureColor(coll);
     Color ret = color * (m_scene->getAmbientLightColor() + m_map->getIrradiance(coll, PHOTON_SAMPLES)) * material->diff;
-
+#ifdef PHOTON_MAP_ONLY
+    return ret;
+#endif
     for (auto light = m_scene->lightsBegin(); light != m_scene->lightsEnd(); light++)
     {
         Vector3 l = (*light)->getSource() - coll.p;
-        double d = l.mod2();
+        double d = l.mod2() * 4;
         l = l.unitize();
         double f = l.dot(coll.n);
         if (f < Const::EPS) continue;
@@ -53,9 +59,9 @@ Color PhotonMapper::m_calcLocalIllumination(const Collision& coll, const Materia
         if (shade < Const::EPS) continue;
 
         if (material->diff > Const::EPS) // 漫反射
-            ret += color * (*light)->getColor() * (material->diff * f * shade) / d;
+            ret += color * (*light)->getColor() * (material->diff * f * shade / d);
         if (material->spec > Const::EPS) // 镜面反射
-            ret += color * (*light)->getColor() * (material->spec * pow(l.dot(r), SPEC_POWER)) / d;
+            ret += color * (*light)->getColor() * (material->spec * pow(l.dot(r), SPEC_POWER) / d);
     }
     return ret;
 }
@@ -67,7 +73,7 @@ Color PhotonMapper::m_rayTraceing(const Vector3& start, const Vector3& dir, doub
     if (!coll.isHit())
         return m_scene->getAmbientLightColor();
     else if (coll.atLight())
-        return coll.light->getColor();
+        return coll.light->getColor().confine();
     else if (depth <= MAX_DEPTH)
     {
         Color ret;

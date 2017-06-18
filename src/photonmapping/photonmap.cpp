@@ -18,13 +18,14 @@ Color PhotonMap::getIrradiance(const Collision& coll, int samples)
     m_findNearestPhotons(0, m_n);
 
     Color ret;
-    double maxDist = m_pq.top().first, k = 1.2;
+    double maxDist = m_pq.top().first, k = 1;
     for (int i = 0; i < samples && !m_pq.empty(); i++, m_pq.pop())
     {
         int id = m_pq.top().second;
-        if (id >= 0 && coll.n.dot(m_photons[id].dir) < -Const::EPS) ret += m_photons[id].pow;
+        if (id >= 0 && coll.n.dot(m_photons[id].dir) < -Const::EPS)
+            ret += m_photons[id].pow * (1 - m_pq.top().first / maxDist / k);
     }
-    return ret * (4 / Const::PI / maxDist);
+    return ret * (4 / Const::PI / maxDist / (1 - 2 / 3 / k));
 }
 
 void PhotonMap::build()

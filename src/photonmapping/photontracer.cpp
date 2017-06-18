@@ -40,7 +40,7 @@ void PhotonTracer::m_photonTracing(Photon& photon, int depth, bool isInternal)
         photon.pos = coll.p;
         const Object* obj = coll.object;
         const Material* material = obj->getMaterial();
-        if (material->diff > Const::EPS && depth > 1) m_map->addPhoton(photon);
+        if (material->diff > Const::EPS) m_map->addPhoton(photon);
 
         Color cd = material->color * obj->getTextureColor(coll), ct(1, 1, 1);
         if (isInternal) // 透明材质的颜色过滤

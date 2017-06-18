@@ -7,10 +7,10 @@
 class RectLight : public Light
 {
 public:
-    RectLight(const Color& c, const Vector3& o, const Vector3& dx, const Vector3& dy)
-        : Light(c), m_o(o), m_dx(dx), m_dy(dy) {}
+    RectLight(const Color& c, const Vector3& o, const Vector3& n, const Vector3& dx, const Vector3& dy)
+        : Light(c), m_o(o), m_n(n), m_dx(dx), m_dy(dy) {}
     RectLight(const Json::Value& light)
-        : Light(light), m_o(light["o"]), m_dx(light["dx"]), m_dy(light["dy"]) {}
+        : Light(light), m_o(light["o"]), m_n(light["n"]), m_dx(light["dx"]), m_dy(light["dy"]) {}
 
     // 发光点
     virtual Vector3 getSource() const override { return m_o; }
@@ -27,7 +27,7 @@ public:
     virtual Json::Value toJson() const override;
 
 private:
-    Vector3 m_o;        // 矩形中心点
+    Vector3 m_o, m_n;   // 矩形中心点、光源朝向
     Vector3 m_dx, m_dy; // 横向、纵向向量
 };
 
