@@ -27,11 +27,6 @@ Vector3 Camera::emit(double x, double y) const
     return m_dir + m_dw * (2.0 * x / m_w - 1) + m_dh * (2.0 * y / m_h - 1);
 }
 
-void Camera::setColor(int x, int y, const Color& color)
-{
-    m_film->setColor(x, y, color);
-}
-
 void Camera::print(const std::string& file) const
 {
     m_film->save(file);

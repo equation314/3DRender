@@ -23,7 +23,7 @@ public:
     Vector3 emit(double x, double y) const;
 
     // 置像素点 (x, y) 的颜色为 color
-    void setColor(int x, int y, const Color& color);
+    void setColor(int x, int y, const Color& color) { m_film->setColor(x, y, color); }
 
     // 打印照片到 file 文件
     void print(const std::string& file) const;

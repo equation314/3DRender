@@ -68,11 +68,6 @@ Bmp::~Bmp()
     delete[] m_data;
 }
 
-Color Bmp::getColor(int x, int y) const
-{
-    return Color(m_data[x][y].r, m_data[x][y].g, m_data[x][y].b) / 255;
-}
-
 Color Bmp::getColor(double u, double v) const
 {
     u *= m_w - 1, v *= m_h - 1;
@@ -89,11 +84,6 @@ Color Bmp::getColor(double u, double v) const
 #else
     return getColor(int(u + 0.5), int(v + 0.5));
 #endif
-}
-
-void Bmp::setColor(int x, int y, const Color& color)
-{
-    m_data[x][y] = BmpColor(color.r * 255 + 0.5, color.g * 255 + 0.5, color.b * 255 + 0.5);
 }
 
 void Bmp::save(const std::string& file) const
