@@ -6,6 +6,10 @@
 #include <json/reader.h>
 #include <json/writer.h>
 
+double Config::anti_aliasing_edge_threshold = 0.1;
+
+int Config::anti_aliasing_samples = 4;
+
 bool Config::enable_fresnel = true;
 
 bool Config::enable_texture_filtering = true;
@@ -24,6 +28,8 @@ int Config::soft_shadow_samples = 4;
 
 void Config::load(const Json::Value& config)
 {
+    anti_aliasing_edge_threshold = config["anti_aliasing_edge_threshold"].asDouble();
+    anti_aliasing_samples = config["anti_aliasing_samples"].asInt();
     enable_fresnel = config["enable_fresnel"].asBool();
     enable_texture_filtering = config["enable_texture_filtering"].asBool();
     hightlight_exponent = config["hightlight_exponent"].asInt();
@@ -37,6 +43,8 @@ void Config::load(const Json::Value& config)
 Json::Value Config::toJson()
 {
     Json::Value config;
+    config["anti_aliasing_edge_threshold"] = anti_aliasing_edge_threshold;
+    config["anti_aliasing_samples"] = anti_aliasing_samples;
     config["enable_fresnel"] = enable_fresnel;
     config["enable_texture_filtering"] = enable_texture_filtering;
     config["hightlight_exponent"] = hightlight_exponent;

@@ -14,6 +14,7 @@ void RayTracer::run(Scene* scene, const std::string& outFile)
     Camera* camera = scene->getCamera();
     int w = camera->getW(), h = camera->getH();
 
+    cout << "Ray tracing..." << endl;
     clock_t lastRefreshTime = clock();
     for (int i = 0; i < w; i++)
     {
@@ -33,6 +34,48 @@ void RayTracer::run(Scene* scene, const std::string& outFile)
     }
 
     camera->print(outFile.c_str());
+
+    if (Config::anti_aliasing_samples)
+    {
+        cout << "Smoothing..." << endl;
+        int samples = Config::anti_aliasing_samples;
+        std::vector<pair<int, int>> list = camera->detectEdge();
+        lastRefreshTime = clock();
+        for (size_t t = 0; t < list.size(); t++)
+        {
+            if (!t || list[t].first != list[t - 1].first)
+                cout << "column " << list[t].first << endl;
+
+            int tot = 0;
+            Color color;
+            for (int i = 0; i < samples * 2; i++)
+                for (int j = 0; j < samples * 2; j++)
+                {
+                    // 旋转网格采样
+                    double a = atan(0.5);
+                    double x = (i + 0.5) / samples - 1,
+                           y = (j + 0.5) / samples - 1;
+                    double dx = x * cos(a) - y * sin(a),
+                           dy = x * sin(a) + y * cos(a);
+                    if (dx > -0.5 && dx < 0.5 && dy > -0.5 && dy < 0.5)
+                    {
+                        Vector3 dir = camera->emit(list[t].first + dx, list[t].second + dy);
+                        color += m_rayTraceing(camera->getEye(), dir, 1, 1, false);
+                        tot++;
+                    }
+                }
+            camera->setColor(list[t].first, list[t].second, color / tot);
+
+            if (Config::output_refresh_interval > 0 &&
+                clock() - lastRefreshTime > Config::output_refresh_interval * CLOCKS_PER_SEC)
+            {
+                lastRefreshTime = clock();
+                camera->print(outFile.c_str());
+            }
+        }
+
+        camera->print(outFile.c_str());
+    }
 }
 
 Color RayTracer::m_calcLocalIllumination(const Collision& coll, const Material* material) const

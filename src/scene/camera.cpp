@@ -1,4 +1,5 @@
 #include "common/bmp.h"
+#include "common/config.h"
 #include "common/const.h"
 #include "scene/camera.h"
 
@@ -25,6 +26,23 @@ Camera::~Camera()
 Vector3 Camera::emit(double x, double y) const
 {
     return m_dir + m_dw * (2.0 * x / m_w - 1) + m_dh * (2.0 * y / m_h - 1);
+}
+
+std::vector<pair<int, int>> Camera::detectEdge() const
+{
+    std::vector<pair<int, int>> list;
+    for (int i = 0; i < m_w; i++)
+        for (int j = 0; j < m_h; j++)
+        {
+            // Sobel operator
+            Color gx = getColor(i + 1, j + 1) + getColor(i - 1, j + 1) + getColor(i, j + 1) * 2 -
+                       getColor(i + 1, j - 1) - getColor(i - 1, j + 1) - getColor(i, j - 1) * 2,
+                  gy = getColor(i + 1, j + 1) + getColor(i + 1, j - 1) + getColor(i + 1, j) * 2 -
+                       getColor(i - 1, j + 1) - getColor(i - 1, j - 1) - getColor(i - 1, j) * 2;
+            if (gx.mod2() + gy.mod2() > Config::anti_aliasing_edge_threshold)
+                list.push_back(make_pair(i, j));
+        }
+    return list;
 }
 
 void Camera::print(const std::string& file) const

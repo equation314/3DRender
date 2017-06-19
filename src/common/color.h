@@ -48,6 +48,9 @@ struct Color
         return *this;
     }
 
+    // 颜色距离
+    double mod2() const { return r * r + g * g + b * b; }
+
     // 反色
     Color inverse() const { return Color(1 - r, 1 - g, 1 - b); }
 

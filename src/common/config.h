@@ -6,6 +6,12 @@
 
 struct Config
 {
+    // 抗锯齿时边缘检测的阈值，若值为 0 全图采样
+    static double anti_aliasing_edge_threshold;
+
+    // 抗锯齿采样数，若值为 0 不使用抗锯齿
+    static int anti_aliasing_samples;
+
     // 使用 Fresnel 方程计算反射和折射系数
     static bool enable_fresnel;
 
