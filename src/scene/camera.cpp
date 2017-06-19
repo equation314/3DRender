@@ -3,6 +3,8 @@
 #include "common/const.h"
 #include "scene/camera.h"
 
+#include <algorithm>
+
 Camera::Camera(const Vector3& eye, const Vector3& lookAt, const Vector3& up, int w, int h, double fovy)
     : m_eye(eye), m_look_at(lookAt), m_dir((lookAt - eye).unitize()), m_up(up),
       m_w(w), m_h(h), m_fovy(fovy * Const::PI / 180)
@@ -34,14 +36,21 @@ std::vector<pair<int, int>> Camera::detectEdge() const
     for (int i = 0; i < m_w; i++)
         for (int j = 0; j < m_h; j++)
         {
-            // Sobel operator
-            Color gx = getColor(i + 1, j + 1) + getColor(i - 1, j + 1) + getColor(i, j + 1) * 2 -
-                       getColor(i + 1, j - 1) - getColor(i - 1, j + 1) - getColor(i, j - 1) * 2,
-                  gy = getColor(i + 1, j + 1) + getColor(i + 1, j - 1) + getColor(i + 1, j) * 2 -
-                       getColor(i - 1, j + 1) - getColor(i - 1, j - 1) - getColor(i - 1, j) * 2;
+            // Roberts cross operator
+            Color gx = getColor(i, j) - getColor(i + 1, j + 1),
+                  gy = getColor(i + 1, j) - getColor(i, j + 1);
             if (gx.mod2() + gy.mod2() > Config::anti_aliasing_edge_threshold)
+            {
                 list.push_back(make_pair(i, j));
+                if (i < m_w - 1 && j < m_h - 1) list.push_back(make_pair(i + 1, j + 1));
+                if (i < m_w - 1) list.push_back(make_pair(i + 1, j));
+                if (j < m_h - 1) list.push_back(make_pair(i, j + 1));
+            }
         }
+
+    sort(list.begin(), list.end());
+    auto iter = unique(list.begin(), list.end());
+    list.erase(iter, list.end());
     return list;
 }
 

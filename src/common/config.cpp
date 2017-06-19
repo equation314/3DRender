@@ -6,7 +6,7 @@
 #include <json/reader.h>
 #include <json/writer.h>
 
-double Config::anti_aliasing_edge_threshold = 0.1;
+double Config::anti_aliasing_edge_threshold = 0.01;
 
 int Config::anti_aliasing_samples = 4;
 
