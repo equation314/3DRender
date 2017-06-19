@@ -1,3 +1,4 @@
+#include "common/config.h"
 #include "common/const.h"
 #include "engine/photonmapper/photontracer.h"
 #include "light/light.h"
@@ -5,20 +6,17 @@
 #include "object/object.h"
 #include "scene/scene.h"
 
-const int MAX_DEPTH = 10;
-
-PhotonMap* PhotonTracer::getPhotonMap(Scene* scene, int photonNumber)
+PhotonMap* PhotonTracer::getPhotonMap()
 {
     if (m_map) delete m_map;
-    m_scene = scene;
     m_map = new PhotonMap();
     double power = 0;
 
-    for (auto l = scene->lightsBegin(); l != scene->lightsEnd(); l++)
+    for (auto l = m_scene->lightsBegin(); l != m_scene->lightsEnd(); l++)
         power += (*l)->getColor().power();
-    power /= photonNumber;
+    power /= Config::photon_number;
 
-    for (auto l = scene->lightsBegin(); l != scene->lightsEnd(); l++)
+    for (auto l = m_scene->lightsBegin(); l != m_scene->lightsEnd(); l++)
     {
         double lightPower = (*l)->getColor().power();
         for (; lightPower > 0; lightPower -= power)
@@ -34,8 +32,10 @@ PhotonMap* PhotonTracer::getPhotonMap(Scene* scene, int photonNumber)
 
 void PhotonTracer::m_photonTracing(Photon& photon, int depth, bool isInternal)
 {
+    if (depth > Config::photon_tracing_max_depth) return;
+
     Collision coll = m_scene->findNearestCollision(photon.pos, photon.dir);
-    if (coll.isHit() && coll.atObject() && depth <= MAX_DEPTH)
+    if (coll.isHit() && coll.atObject())
     {
         photon.pos = coll.p;
         const Object* obj = coll.object;

@@ -5,7 +5,11 @@
 	"enable_texture_filtering" : true,
 	"hightlight_exponent" : 50,
 	"newton_iteration_depth" : 20,
-	"output_refresh_interval" : 1,
+	"output_refresh_interval" : 2.0,
+	"photon_map_only" : true,
+	"photon_number" : 1000000,
+	"photon_samples" : 1000,
+	"photon_tracing_max_depth" : 10,
 	"raytracing_max_depth" : 20,
 	"raytracing_min_weight" : 0.05,
 	"soft_shadow_samples" : 4

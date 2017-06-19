@@ -8,11 +8,11 @@ class Scene;
 class PhotonTracer
 {
 public:
-    PhotonTracer()
-        : m_map(nullptr), m_scene(nullptr) {}
+    PhotonTracer(Scene* scene)
+        : m_map(nullptr), m_scene(scene) {}
     ~PhotonTracer() {}
 
-    PhotonMap* getPhotonMap(Scene* scene, int photonNumber);
+    PhotonMap* getPhotonMap();
 
 private:
     PhotonMap* m_map;

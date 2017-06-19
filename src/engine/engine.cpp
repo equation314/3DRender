@@ -1,6 +1,6 @@
 #include "engine/engine.h"
 
-Engine::Engine()
-    : m_scene(nullptr)
+Engine::Engine(Scene* scene)
+    : m_scene(scene)
 {
 }

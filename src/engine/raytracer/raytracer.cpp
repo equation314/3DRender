@@ -5,10 +5,11 @@
 
 #include <ctime>
 
-void RayTracer::run(Scene* scene, const std::string& outFile)
+void RayTracer::run(const std::string& outFile)
 {
-    m_scene = scene;
-    Camera* camera = scene->getCamera();
+    if (!m_scene) return;
+
+    Camera* camera = m_scene->getCamera();
     int w = camera->getW(), h = camera->getH();
 
     cout << "Ray tracing..." << endl;
@@ -19,7 +20,7 @@ void RayTracer::run(Scene* scene, const std::string& outFile)
         {
             if (!j) cout << "column " << i << endl;
             Vector3 dir = camera->emit(i, j);
-            Color color = m_rayTraceing(camera->getEye(), dir, 1, 1, false);
+            Color color = m_rayTracing(camera->getEye(), dir, 1, 1, false);
             camera->setColor(i, j, color);
         }
         if (Config::output_refresh_interval > 0 &&
@@ -57,7 +58,7 @@ void RayTracer::run(Scene* scene, const std::string& outFile)
                     if (dx > -0.5 && dx < 0.5 && dy > -0.5 && dy < 0.5)
                     {
                         Vector3 dir = camera->emit(list[t].first + dx, list[t].second + dy);
-                        color += m_rayTraceing(camera->getEye(), dir, 1, 1, false);
+                        color += m_rayTracing(camera->getEye(), dir, 1, 1, false);
                         tot++;
                     }
                 }
@@ -96,15 +97,17 @@ Color RayTracer::m_calcLocalIllumination(const Collision& coll, const Material* 
     return ret;
 }
 
-Color RayTracer::m_rayTraceing(const Vector3& start, const Vector3& dir, double weight, int depth, bool isInternal) const
+Color RayTracer::m_rayTracing(const Vector3& start, const Vector3& dir, double weight, int depth, bool isInternal) const
 {
-    if (weight < Config::raytracing_min_weight) return m_scene->getAmbientLightColor();
+    if (weight < Config::raytracing_min_weight || depth > Config::raytracing_max_depth)
+        return Color();
+
     Collision coll = m_scene->findNearestCollision(start, dir);
     if (!coll.isHit())
         return m_scene->getAmbientLightColor();
     else if (coll.atLight())
         return coll.light->getColor();
-    else if (depth <= Config::raytracing_max_depth)
+    else
     {
         Color ret;
         const Object* obj = coll.object;
@@ -119,14 +122,14 @@ Color RayTracer::m_rayTraceing(const Vector3& start, const Vector3& dir, double 
             Vector3 refl = coll.ray_dir.reflect(coll.n);
             Vector3 refr = coll.ray_dir.refract(coll.n, n);
             if (material->refr < Const::EPS) // 全镜面反射
-                ret += m_rayTraceing(coll.p, refl, weight * material->refl, depth + 1, isInternal) * (material->color * material->refl);
+                ret += m_rayTracing(coll.p, refl, weight * material->refl, depth + 1, isInternal) * (material->color * material->refl);
             else if (refr.mod2() < Const::EPS) // 全反射
             {
                 double k = material->refl + material->refr;
-                ret += m_rayTraceing(coll.p, refl, weight * k, depth + 1, isInternal) * (material->color * k);
+                ret += m_rayTracing(coll.p, refl, weight * k, depth + 1, isInternal) * (material->color * k);
             }
             else if (material->refl < Const::EPS) // 全透射
-                ret += m_rayTraceing(coll.p, refr, weight * material->refr, depth + 1, !isInternal) * material->refr;
+                ret += m_rayTracing(coll.p, refr, weight * material->refr, depth + 1, !isInternal) * material->refr;
             else
             {
                 double kl = material->refl, kr = material->refr;
@@ -138,8 +141,8 @@ Color RayTracer::m_rayTraceing(const Vector3& start, const Vector3& dir, double 
                     kl = (r1 * r1 + r2 * r2) / 2, kr = 1 - kl;
                 }
 
-                if (kl > Const::EPS) ret += m_rayTraceing(coll.p, refl, weight * kl, depth + 1, isInternal) * (material->color * kl);
-                if (kr > Const::EPS) ret += m_rayTraceing(coll.p, refr, weight * kr, depth + 1, !isInternal) * kr;
+                if (kl > Const::EPS) ret += m_rayTracing(coll.p, refl, weight * kl, depth + 1, isInternal) * (material->color * kl);
+                if (kr > Const::EPS) ret += m_rayTracing(coll.p, refr, weight * kr, depth + 1, !isInternal) * kr;
             }
         }
 
@@ -149,6 +152,4 @@ Color RayTracer::m_rayTraceing(const Vector3& start, const Vector3& dir, double 
 
         return ret.confine();
     }
-    else
-        return Color();
 }

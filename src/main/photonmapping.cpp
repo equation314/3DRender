@@ -6,13 +6,10 @@ int main(int argc, char* argv[])
         printf("Usage: ./photon_mapping <SCENE_FILE>\n");
     else
     {
-        Engine* engine = new PhotonMapper();
         Scene* scene = Scene::loadFrom(argv[1]);
-        if (scene)
-        {
-            engine->run(scene, "output.bmp");
-            delete scene;
-        }
+        Engine* engine = new PhotonMapper(scene);
+        engine->run("output.bmp");
+        if (scene) delete scene;
         delete engine;
     }
     return 0;
