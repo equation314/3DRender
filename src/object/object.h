@@ -27,7 +27,7 @@ public:
     virtual Json::Value toJson() const;
 
     // 保存 JSON 到文件
-    void save(const std::string& file) const;
+    virtual void save(const std::string& file) const;
 
     // 从 JSON 导入物体
     static Object* loadFromJson(const Json::Value& value);

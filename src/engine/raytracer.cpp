@@ -1,10 +1,7 @@
 #include "common/config.h"
 #include "common/const.h"
-#include "light/light.h"
-#include "object/object.h"
-#include "raytracing/raytracer.h"
+#include "engine/raytracer.h"
 #include "scene/camera.h"
-#include "scene/scene.h"
 
 #include <ctime>
 

@@ -1,24 +1,18 @@
 #ifndef RAYTRACER_H
 #define RAYTRACER_H
 
-#include "common/color.h"
-#include "common/vector3.h"
+#include "engine/engine.h"
 
-class Collision;
-class Material;
-class Scene;
-
-class RayTracer
+class RayTracer : public Engine
 {
 public:
-    RayTracer() {}
+    RayTracer()
+        : Engine() {}
     ~RayTracer() {}
 
-    void run(Scene* scene, const std::string& outFile);
+    virtual void run(Scene* scene, const std::string& outFile) override;
 
 private:
-    Scene* m_scene;
-
     Color m_calcLocalIllumination(const Collision& coll, const Material* Material) const;
     Color m_calcReflection(const Collision& coll, const Material* Material, double weight, int depth, bool isInternal) const;
     Color m_calcRefraction(const Collision& coll, const Material* Material, double weight, int depth, bool isInternal) const;
