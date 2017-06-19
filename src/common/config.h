@@ -21,6 +21,18 @@ struct Config
     // 高光指数
     static int hightlight_exponent;
 
+    // 只使用光子图渲染
+    static bool photon_map_only;
+
+    // 发射光子数
+    static int photon_number;
+
+    // 采样光子数
+    static int photon_samples;
+
+    // 光子跟踪最大递归深度
+    static int photon_tracing_max_depth;
+
     // 牛顿迭代法深度
     static int newton_iteration_depth;
 

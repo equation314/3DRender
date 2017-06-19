@@ -14,7 +14,10 @@ struct Color
         : r(r), g(g), b(b) {}
     Color(const Json::Value& color);
 
-    Color operator*(double k) const { return Color(r * k, g * k, b * k); }
+    Color operator*(double k) const
+    {
+        return Color(r * k, g * k, b * k);
+    }
 
     Color operator/(double k) const { return Color(r / k, g / k, b / k); }
 
@@ -65,6 +68,9 @@ struct Color
     {
         return Color(std::max(std::min(r, 1.0), 0.0), std::max(std::min(g, 1.0), 0.0), std::max(std::min(b, 1.0), 0.0));
     }
+
+    // 光子映射时的能量
+    double power() const { return (r + g + b) / 3; }
 
     Json::Value toJson() const;
 

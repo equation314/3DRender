@@ -4,16 +4,17 @@
 #include "scene/scene.h"
 
 class RayTracer;
+class PhotonMapper;
 
 class Engine
 {
 public:
     virtual ~Engine() {}
 
-    virtual void run(Scene* scene, const std::string& outFile) = 0;
+    virtual void run(const std::string& outFile) = 0;
 
 protected:
-    Engine();
+    Engine(Scene* scene);
 
     Scene* m_scene;
 };

@@ -16,6 +16,14 @@ bool Config::enable_texture_filtering = true;
 
 int Config::hightlight_exponent = 50;
 
+bool Config::photon_map_only = true;
+
+int Config::photon_number = 1000000;
+
+int Config::photon_samples = 1000;
+
+int Config::photon_tracing_max_depth = 10;
+
 int Config::newton_iteration_depth = 20;
 
 double Config::output_refresh_interval = 1;
@@ -33,6 +41,10 @@ void Config::load(const Json::Value& config)
     enable_fresnel = config["enable_fresnel"].asBool();
     enable_texture_filtering = config["enable_texture_filtering"].asBool();
     hightlight_exponent = config["hightlight_exponent"].asInt();
+    photon_map_only = config["photon_map_only"].asBool();
+    photon_number = config["photon_number"].asInt();
+    photon_samples = config["photon_samples"].asInt();
+    photon_tracing_max_depth = config["photon_tracing_max_depth"].asInt();
     newton_iteration_depth = config["newton_iteration_depth"].asInt();
     output_refresh_interval = config["output_refresh_interval"].asDouble();
     raytracing_max_depth = config["raytracing_max_depth"].asInt();
@@ -48,6 +60,10 @@ Json::Value Config::toJson()
     config["enable_fresnel"] = enable_fresnel;
     config["enable_texture_filtering"] = enable_texture_filtering;
     config["hightlight_exponent"] = hightlight_exponent;
+    config["photon_map_only"] = photon_map_only;
+    config["photon_number"] = photon_number;
+    config["photon_samples"] = photon_samples;
+    config["photon_tracing_max_depth"] = photon_tracing_max_depth;
     config["newton_iteration_depth"] = newton_iteration_depth;
     config["output_refresh_interval"] = output_refresh_interval;
     config["raytracing_max_depth"] = raytracing_max_depth;

@@ -34,13 +34,13 @@
 	],
 	"material" :
 	{
-		"absorb_color" : "(0.2, 0.2, 0.2)",
+		"absorb_color" : "(0.0, 0.0, 0.0)",
 		"color" : "(1, 1, 1)",
 		"diff" : 0,
-		"refl" : 1,
-		"refr" : 1,
+		"refl" : 0.2,
+		"refr" : 0.8,
 		"refr_index" : 1.5,
-		"spec" : 0.8
+		"spec" : 0
 		// "texture": "../textures/marble.bmp"
 	},
 	"o" : "(-0.1, 1.2, -0.99999)",

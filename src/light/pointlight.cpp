@@ -20,6 +20,11 @@ double PointLight::getShadowRatio(const Scene* scene, const Vector3& p) const
     return 1;
 }
 
+Photon PointLight::emitPhoton(double power) const
+{
+    return Photon(m_o, Vector3::randVector(), m_color * (power / m_color.power()));
+}
+
 Json::Value PointLight::toJson() const
 {
     Json::Value light = Light::toJson();
