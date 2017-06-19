@@ -1,0 +1,10 @@
+{
+	"enable_fresnel" : true,
+	"enable_texture_filtering" : true,
+	"hightlight_exponent" : 50,
+	"newton_iteration_depth" : 20,
+	"output_refresh_interval" : 1,
+	"raytracing_max_depth" : 20,
+	"raytracing_min_weight" : 0.05,
+	"soft_shadow_samples" : 4
+}

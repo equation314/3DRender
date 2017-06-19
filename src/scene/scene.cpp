@@ -1,3 +1,4 @@
+#include "common/config.h"
 #include "common/const.h"
 #include "light/light.h"
 #include "light/pointlight.h"
@@ -38,6 +39,13 @@ Scene::Scene(const Json::Value& scene)
             object = Object::loadFromJson(o);
         if (object) m_objects.push_back(object);
     }
+
+    Json::Value config = scene["config"];
+    if (config.isString())
+        Config::loadFrom(m_scene_file_dir + "/" + config.asString());
+    else if (!config.isNull())
+        Config::load(config);
+
     m_init();
 }
 

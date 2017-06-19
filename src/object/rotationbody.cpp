@@ -3,9 +3,6 @@
 #include "object/rotationbody.h"
 #include "util/polynomial6.h"
 
-const int SUBSURFACE_NUM = 32;
-const int ITERATION_NUM = 20;
-
 RotationBody::RotationBody(const Vector3& o, const Curves& curves, const Material* m)
     : Object(m), m_o(o), m_curves(curves),
       m_r(0), m_h(0), m_arg(0)

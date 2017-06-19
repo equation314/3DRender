@@ -1,10 +1,10 @@
+#include "common/config.h"
 #include "common/const.h"
 #include "util/polynomial6.h"
 
 #include <cstring>
 #include <iostream>
 
-const int ITERATION_NUM = 20;
 const long double EPS = 1e-10;
 
 Polynomial6::Polynomial6(const long double a[7])
@@ -89,7 +89,7 @@ void Polynomial6::m_init()
 bool Polynomial6::m_findOneRoot(long double l, long double r, long double& x)
 {
     x = l;
-    for (int i = 0; i < ITERATION_NUM; i++)
+    for (int i = 0; i < Config::newton_iteration_depth; i++)
     {
         long double f = F(x), d = dF(x), dx;
         if (abs(f) < 1e-14) return l < x - EPS && x < r - EPS;

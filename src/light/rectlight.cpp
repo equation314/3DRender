@@ -1,9 +1,8 @@
+#include "common/config.h"
 #include "common/const.h"
 #include "light/rectlight.h"
 #include "object/object.h"
 #include "scene/scene.h"
-
-const int SHADOW_SAMPLE = 4;
 
 Collision RectLight::collide(const Vector3& start, const Vector3& dir) const
 {
@@ -21,12 +20,12 @@ Collision RectLight::collide(const Vector3& start, const Vector3& dir) const
 
 double RectLight::getShadowRatio(const Scene* scene, const Vector3& p) const
 {
-    int ret = SHADOW_SAMPLE * SHADOW_SAMPLE;
-    for (int i = 0; i < SHADOW_SAMPLE; i++)
-        for (int j = 0; j < SHADOW_SAMPLE; j++)
+    int samples = Config::soft_shadow_samples, ret = samples * samples;
+    for (int i = 0; i < samples; i++)
+        for (int j = 0; j < samples; j++)
         {
-            double x = (i + 0.5) * 2 / SHADOW_SAMPLE - 1,
-                   y = (j + 0.5) * 2 / SHADOW_SAMPLE - 1;
+            double x = (i + 0.5) * 2 / samples - 1,
+                   y = (j + 0.5) * 2 / samples - 1;
             Vector3 c = m_o + m_dx * x + m_dy * y, dir = c - p;
             double dist = dir.mod();
 
@@ -40,7 +39,7 @@ double RectLight::getShadowRatio(const Scene* scene, const Vector3& p) const
                 }
             }
         }
-    return 1.0 * ret / SHADOW_SAMPLE / SHADOW_SAMPLE;
+    return 1.0 * ret / samples / samples;
 }
 
 Json::Value RectLight::toJson() const
