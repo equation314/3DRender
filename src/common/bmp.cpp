@@ -1,9 +1,8 @@
 #include "common/bmp.h"
+#include "common/config.h"
 #include "common/const.h"
 
 #include <cstring>
-
-#define ENABLE_TEXTURE_FILTERING // 启用纹理滤波
 
 Bmp::Bmp(int w, int h, const Color& background)
     : m_w(w), m_h(h),
@@ -68,32 +67,23 @@ Bmp::~Bmp()
     delete[] m_data;
 }
 
-Color Bmp::getColor(int x, int y) const
-{
-    return Color(m_data[x][y].r, m_data[x][y].g, m_data[x][y].b) / 255;
-}
-
 Color Bmp::getColor(double u, double v) const
 {
     u *= m_w - 1, v *= m_h - 1;
-#ifdef ENABLE_TEXTURE_FILTERING // 双线性插值
-    int u1 = floor(u + Const::EPS), v1 = floor(v + Const::EPS),
-        u2 = u1 + 1, v2 = v1 + 1;
-    double ru = u2 - u, rv = v2 - v;
-    if (u1 < 0) u1 = m_w - 1;
-    if (v1 < 0) v1 = m_h - 1;
-    if (u2 == m_w) u2 = 0;
-    if (v2 == m_h) v2 = 0;
-    return getColor(u1, v1) * (ru * rv) + getColor(u1, v2) * (ru * (1 - rv)) +
-           getColor(u2, v1) * ((1 - ru) * rv) + getColor(u2, v2) * ((1 - ru) * (1 - rv));
-#else
-    return getColor(int(u + 0.5), int(v + 0.5));
-#endif
-}
-
-void Bmp::setColor(int x, int y, const Color& color)
-{
-    m_data[x][y] = BmpColor(color.r * 255 + 0.5, color.g * 255 + 0.5, color.b * 255 + 0.5);
+    if (Config::enable_texture_filtering) // 双线性插值
+    {
+        int u1 = floor(u + Const::EPS), v1 = floor(v + Const::EPS),
+            u2 = u1 + 1, v2 = v1 + 1;
+        double ru = u2 - u, rv = v2 - v;
+        if (u1 < 0) u1 = m_w - 1;
+        if (v1 < 0) v1 = m_h - 1;
+        if (u2 == m_w) u2 = 0;
+        if (v2 == m_h) v2 = 0;
+        return getColor(u1, v1) * (ru * rv) + getColor(u1, v2) * (ru * (1 - rv)) +
+               getColor(u2, v1) * ((1 - ru) * rv) + getColor(u2, v2) * ((1 - ru) * (1 - rv));
+    }
+    else
+        return getColor(int(u + 0.5), int(v + 0.5));
 }
 
 void Bmp::save(const std::string& file) const

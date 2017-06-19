@@ -1,5 +1,4 @@
-#include "raytracing/raytracer.h"
-#include "scene/scene.h"
+#include "engine/raytracer/raytracer.h"
 
 int main(int argc, char* argv[])
 {
@@ -7,7 +6,7 @@ int main(int argc, char* argv[])
         printf("Usage: ./ray_tracing <SCENE_FILE>\n");
     else
     {
-        RayTracer* engine = new RayTracer();
+        Engine* engine = new RayTracer();
         Scene* scene = Scene::loadFrom(argv[1]);
         if (scene)
         {

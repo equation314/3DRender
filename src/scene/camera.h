@@ -1,10 +1,11 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include <string>
-
 #include "common/color.h"
 #include "common/vector3.h"
+
+#include <string>
+#include <vector>
 
 class Bmp;
 
@@ -22,8 +23,16 @@ public:
     // 像素点对应的光线方向
     Vector3 emit(double x, double y) const;
 
+    Color getColor(int x, int y) const
+    {
+        return 0 <= x && x < m_w && 0 <= y && y < m_h ? m_film->getColor(x, y) : Color();
+    }
+
     // 置像素点 (x, y) 的颜色为 color
-    void setColor(int x, int y, const Color& color);
+    void setColor(int x, int y, const Color& color) { m_film->setColor(x, y, color); }
+
+    // 边缘检测
+    std::vector<pair<int, int>> detectEdge() const;
 
     // 打印照片到 file 文件
     void print(const std::string& file) const;

@@ -1,7 +1,7 @@
 #ifndef PHOTONTRACER_H
 #define PHOTONTRACER_H
 
-#include "photonmapping/photonmap.h"
+#include "engine/photonmapper/photonmap.h"
 
 class Scene;
 

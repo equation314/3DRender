@@ -1,4 +1,5 @@
 {
+	"config" : "config.json",
 	"ambient_color" : "(0.100000, 0.100000, 0.100000)",
 	"camera" :
 	{

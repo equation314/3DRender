@@ -1,6 +1,9 @@
 #include "common/bmp.h"
+#include "common/config.h"
 #include "common/const.h"
 #include "scene/camera.h"
+
+#include <algorithm>
 
 Camera::Camera(const Vector3& eye, const Vector3& lookAt, const Vector3& up, int w, int h, double fovy)
     : m_eye(eye), m_look_at(lookAt), m_dir((lookAt - eye).unitize()), m_up(up),
@@ -27,9 +30,28 @@ Vector3 Camera::emit(double x, double y) const
     return m_dir + m_dw * (2.0 * x / m_w - 1) + m_dh * (2.0 * y / m_h - 1);
 }
 
-void Camera::setColor(int x, int y, const Color& color)
+std::vector<pair<int, int>> Camera::detectEdge() const
 {
-    m_film->setColor(x, y, color);
+    std::vector<pair<int, int>> list;
+    for (int i = 0; i < m_w; i++)
+        for (int j = 0; j < m_h; j++)
+        {
+            // Roberts cross operator
+            Color gx = getColor(i, j) - getColor(i + 1, j + 1),
+                  gy = getColor(i + 1, j) - getColor(i, j + 1);
+            if (gx.mod2() + gy.mod2() > Config::anti_aliasing_edge_threshold)
+            {
+                list.push_back(make_pair(i, j));
+                if (i < m_w - 1 && j < m_h - 1) list.push_back(make_pair(i + 1, j + 1));
+                if (i < m_w - 1) list.push_back(make_pair(i + 1, j));
+                if (j < m_h - 1) list.push_back(make_pair(i, j + 1));
+            }
+        }
+
+    sort(list.begin(), list.end());
+    auto iter = unique(list.begin(), list.end());
+    list.erase(iter, list.end());
+    return list;
 }
 
 void Camera::print(const std::string& file) const

@@ -1,8 +1,8 @@
 #include "common/const.h"
+#include "engine/photonmapper/photontracer.h"
 #include "light/light.h"
 #include "object/material.h"
 #include "object/object.h"
-#include "photonmapping/photontracer.h"
 #include "scene/scene.h"
 
 const int MAX_DEPTH = 10;

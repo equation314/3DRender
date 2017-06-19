@@ -1,31 +1,22 @@
-#ifndef PHOTONMAPPER_H
-#define PHOTONMAPPER_H
+#ifndef RAYTRACER_H
+#define RAYTRACER_H
 
-#include "common/color.h"
-#include "common/vector3.h"
+#include "engine/engine.h"
 
-class Collision;
-class Material;
-class Scene;
-class PhotonMap;
-class PhotonTracer;
-
-class PhotonMapper
+class RayTracer : public Engine
 {
 public:
-    PhotonMapper() {}
-    ~PhotonMapper() {}
+    RayTracer()
+        : Engine() {}
+    ~RayTracer() {}
 
-    void run(Scene* scene, const std::string& outFile);
+    virtual void run(Scene* scene, const std::string& outFile) override;
 
 private:
-    Scene* m_scene;
-    PhotonMap* m_map;
-
     Color m_calcLocalIllumination(const Collision& coll, const Material* Material) const;
     Color m_calcReflection(const Collision& coll, const Material* Material, double weight, int depth, bool isInternal) const;
     Color m_calcRefraction(const Collision& coll, const Material* Material, double weight, int depth, bool isInternal) const;
     Color m_rayTraceing(const Vector3& start, const Vector3& dir, double weight, int depth, bool isInternal) const;
 };
 
-#endif // PHOTONMAPPER_H
+#endif // RAYTRACER_H

@@ -14,9 +14,21 @@ public:
 
     int getW() const { return m_w; }
     int getH() const { return m_h; }
-    Color getColor(int x, int y) const;
+
+    // 直接获取像素点颜色
+    Color getColor(int x, int y) const
+    {
+        return Color(m_data[x][y].r, m_data[x][y].g, m_data[x][y].b) / 255;
+    }
+
+    // 根据像素位置计算颜色
     Color getColor(double u, double v) const;
-    void setColor(int x, int y, const Color& color);
+
+    void setColor(int x, int y, const Color& color)
+    {
+        m_data[x][y] = BmpColor(color.r * 255 + 0.5, color.g * 255 + 0.5, color.b * 255 + 0.5);
+    }
+
     void save(const std::string& file) const;
     std::string getFilename() const { return m_file_name; }
 

@@ -1,9 +1,9 @@
 #include "common/const.h"
+#include "engine/photonmapper/photonmap.h"
+#include "engine/photonmapper/photonmapper.h"
+#include "engine/photonmapper/photontracer.h"
 #include "light/light.h"
 #include "object/object.h"
-#include "photonmapping/photonmap.h"
-#include "photonmapping/photonmapper.h"
-#include "photonmapping/photontracer.h"
 #include "scene/camera.h"
 #include "scene/scene.h"
 
@@ -12,8 +12,8 @@
 const double MIN_WEIGHT = 0.05;
 const int MAX_DEPTH = 20;
 const int SPEC_POWER = 50;
-const int PHOTON_NUMBER = 5000000;
-const int PHOTON_SAMPLES = 10000;
+const int PHOTON_NUMBER = 500000;
+const int PHOTON_SAMPLES = 500;
 
 void PhotonMapper::run(Scene* scene, const std::string& outFile)
 {

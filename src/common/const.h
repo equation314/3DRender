@@ -9,8 +9,8 @@ using namespace std;
 
 namespace Const
 {
-const double EPS = 1e-6;
-const double PI = acos(-1.0);
+constexpr double EPS = 1e-6;
+constexpr double PI = acos(-1.0);
 
 inline double randDouble()
 {

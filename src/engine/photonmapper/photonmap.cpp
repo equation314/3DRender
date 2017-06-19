@@ -1,6 +1,6 @@
 #include "common/const.h"
+#include "engine/photonmapper/photonmap.h"
 #include "object/collision.h"
-#include "photonmapping/photonmap.h"
 
 #include <algorithm>
 

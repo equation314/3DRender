@@ -1,32 +1,15 @@
 include_directories(.)
 
-aux_source_directory(common COMMON_SRCS)
-add_library(common ${COMMON_SRCS})
+add_subdirectory(common)
 
-aux_source_directory(util UTIL_SRCS)
-add_library(util ${UTIL_SRCS})
+add_subdirectory(util)
 
-aux_source_directory(light LIGHT_SRCS)
-add_library(light ${LIGHT_SRCS})
+add_subdirectory(light)
 
-aux_source_directory(object OBJECT_SRCS)
-add_library(object ${OBJECT_SRCS})
-target_link_libraries(object util common)
+add_subdirectory(object)
 
-aux_source_directory(scene SCENE_SRCS)
-add_library(scene ${SCENE_SRCS})
-target_link_libraries(scene object light common)
+add_subdirectory(scene)
 
+add_subdirectory(engine)
 
-
-aux_source_directory(modeling MODELING)
-add_executable(modeling ${MODELING})
-target_link_libraries(modeling object jsoncpp_lib_static)
-
-aux_source_directory(raytracing RAY_TRACING_SRCS)
-add_executable(ray_tracing ${RAY_TRACING_SRCS})
-target_link_libraries(ray_tracing scene jsoncpp_lib_static)
-
-aux_source_directory(photonmapping PHOTON_MAPPING_SRCS)
-add_executable(photon_mapping ${PHOTON_MAPPING_SRCS})
-target_link_libraries(photon_mapping scene jsoncpp_lib_static)
+add_subdirectory(main)
