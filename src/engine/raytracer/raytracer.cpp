@@ -8,9 +8,7 @@
 void RayTracer::run(const std::string& outFile)
 {
     if (!m_scene) return;
-
-    Camera* camera = m_scene->getCamera();
-    int w = camera->getW(), h = camera->getH();
+    int w = m_camera->getW(), h = m_camera->getH();
 
     cout << "Ray tracing..." << endl;
     clock_t lastRefreshTime = clock();
@@ -19,61 +17,70 @@ void RayTracer::run(const std::string& outFile)
         for (int j = 0; j < h; j++)
         {
             if (!j) cout << "column " << i << endl;
-            Vector3 dir = camera->emit(i, j);
-            Color color = m_rayTracing(camera->getEye(), dir, Color(1, 1, 1), 1, 1, false).confine();
-            camera->setColor(i, j, color);
+            Vector3 dir = m_camera->emit(i, j);
+            Color color = m_rayTracing(m_camera->getEye(), dir, Color(1, 1, 1), 1, 1, false).confine();
+            m_camera->setColor(i, j, color);
         }
         if (Config::output_refresh_interval > 0 &&
             clock() - lastRefreshTime > Config::output_refresh_interval * CLOCKS_PER_SEC)
         {
             lastRefreshTime = clock();
-            camera->print(outFile.c_str());
+            m_camera->print(outFile.c_str());
         }
     }
 
-    camera->print(outFile.c_str());
+    m_camera->print(outFile.c_str());
 
     if (Config::anti_aliasing_samples)
     {
         cout << "Smoothing..." << endl;
-        int samples = Config::anti_aliasing_samples;
-        std::vector<pair<int, int>> list = camera->detectEdge();
+        std::vector<pair<int, int>> list = m_camera->detectEdge();
         lastRefreshTime = clock();
         for (size_t t = 0; t < list.size(); t++)
         {
             if (!t || list[t].first != list[t - 1].first)
                 cout << "column " << list[t].first << endl;
 
-            int tot = 0;
-            Color color;
-            for (int i = 0; i < samples * 2; i++)
-                for (int j = 0; j < samples * 2; j++)
-                {
-                    // 旋转网格采样
-                    double a = atan(0.5);
-                    double x = (i + 0.5) / samples - 1,
-                           y = (j + 0.5) / samples - 1;
-                    double dx = x * cos(a) - y * sin(a),
-                           dy = x * sin(a) + y * cos(a);
-                    if (dx > -0.5 && dx < 0.5 && dy > -0.5 && dy < 0.5)
-                    {
-                        Vector3 dir = camera->emit(list[t].first + dx, list[t].second + dy);
-                        color += m_rayTracing(camera->getEye(), dir, Color(1, 1, 1), 1, 1, false).confine();
-                        tot++;
-                    }
-                }
-            camera->setColor(list[t].first, list[t].second, color / tot);
+            m_camera->setColor(list[t].first, list[t].second, m_samplingColor(list[t].first, list[t].second));
 
             if (Config::output_refresh_interval > 0 &&
                 clock() - lastRefreshTime > Config::output_refresh_interval * CLOCKS_PER_SEC)
             {
                 lastRefreshTime = clock();
-                camera->print(outFile.c_str());
+                m_camera->print(outFile.c_str());
             }
         }
 
-        camera->print(outFile.c_str());
+        m_camera->print(outFile.c_str());
     }
+}
+
+Color RayTracer::m_samplingColor(int ox, int oy) const
+{
+    if (!Config::anti_aliasing_samples)
+        return m_rayTracing(m_camera->getEye(), m_camera->emit(ox, oy), Color(1, 1, 1), 1, 1, false).confine();
+
+    std::vector<pair<double, double>> points;
+    int samples = Config::anti_aliasing_samples;
+    for (int i = 0; i < samples * 2; i++)
+        for (int j = 0; j < samples * 2; j++)
+        {
+            // 旋转网格采样
+            double a = atan(0.5);
+            double x = (i + 0.5) / samples - 1,
+                   y = (j + 0.5) / samples - 1;
+            double dx = x * cos(a) - y * sin(a),
+                   dy = x * sin(a) + y * cos(a);
+            if (dx > -0.5 && dx < 0.5 && dy > -0.5 && dy < 0.5)
+                points.push_back(make_pair(ox + dx, oy + dy));
+        }
+    Color color;
+    for (auto p : points)
+    {
+        Vector3 dir = m_camera->emit(p.first, p.second);
+        color += m_rayTracing(m_camera->getEye(), dir, Color(1, 1, 1) / points.size(), 1, 1, false);
+    }
+    return color.confine();
 }
 
 Color RayTracer::m_calcLocalIllumination(const Collision& coll, const Material* material, const Color& factor) const

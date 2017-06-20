@@ -1,6 +1,6 @@
 {
 	"anti_aliasing_edge_threshold" : 0.01,
-	"anti_aliasing_samples" : 4,
+	"anti_aliasing_samples" : 2,
 	"enable_fresnel" : true,
 	"enable_texture_filtering" : true,
 	"hightlight_exponent" : 50,
@@ -13,7 +13,7 @@
 	"ppm_alpha" : 0.666667,
 	"ppm_initial_search_radius" : 0.05,
 	"ppm_iteration_depth" : 1000,
-	"ppm_photon_emitted_number" : 100000,
+	"ppm_photon_emitted_number" : 10000,
 	"raytracing_max_depth" : 20,
 	"raytracing_min_weight" : 0.05,
 	"soft_shadow_samples" : 4

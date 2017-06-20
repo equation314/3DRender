@@ -9,9 +9,7 @@ void PPM::run(const std::string& outFile)
 {
     if (!m_scene) return;
     m_map = new HitPointMap();
-
-    Camera* camera = m_scene->getCamera();
-    int w = camera->getW(), h = camera->getH();
+    int w = m_camera->getW(), h = m_camera->getH();
 
     cout << "Eye tracing..." << endl;
     for (int i = 0; i < w; i++)
@@ -19,15 +17,13 @@ void PPM::run(const std::string& outFile)
         {
             m_pixel_x = i, m_pixel_y = j;
             if (!j) cout << "column " << i << endl;
-            Vector3 dir = camera->emit(i, j);
-            Color color = m_rayTracing(camera->getEye(), dir, Color(1, 1, 1), 1, 1, false).confine();
-            camera->setColor(i, j, color);
+            m_camera->setColor(i, j, m_samplingColor(i, j));
         }
 
-    camera->print(outFile.c_str());
+    m_camera->print(outFile.c_str());
     m_map->build();
 
-    Bmp* film = camera->copyFilm();
+    Bmp* film = m_camera->copyFilm();
 
     cout << "Start iteration..." << endl;
     PhotonTracer* tracer = new PhotonTracer(m_scene, m_map);
@@ -38,15 +34,15 @@ void PPM::run(const std::string& outFile)
         m_map->update();
         tot += Config::ppm_photon_emitted_number;
 
-        camera->setFilm(film);
+        m_camera->setFilm(film);
         for (auto p = m_map->hitPointBegin(); p != m_map->hitPointEnd(); p++)
         {
-            Color color = camera->getColor(p->x, p->y);
+            Color color = m_camera->getColor(p->x, p->y);
             color += p->color * p->flux * (1 / Const::PI / p->r2 / tot);
             color = color.confine();
-            camera->setColor(p->x, p->y, color);
+            m_camera->setColor(p->x, p->y, color);
         }
-        camera->print(outFile.c_str());
+        m_camera->print(outFile.c_str());
     }
 
     delete film;
