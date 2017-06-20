@@ -25,7 +25,7 @@ Color PhotonMap::getIrradiance(const Collision& coll, int samples)
         if (id >= 0 && coll.n.dot(m_photons[id].dir) < -Const::EPS)
             ret += m_photons[id].pow * (1 - m_pq.top().first / maxDist / k);
     }
-    return ret * (4 / Const::PI / maxDist / (1 - 2 / 3 / k));
+    return ret * (1 / Const::PI / maxDist / (1 - 2 / 3 / k));
 }
 
 void PhotonMap::build()

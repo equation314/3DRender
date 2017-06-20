@@ -102,7 +102,7 @@ Color RayTracer::m_rayTracing(const Vector3& start, const Vector3& dir,
     if (!coll.isHit())
         return m_scene->getAmbientLightColor() * factor;
     else if (coll.atLight())
-        return coll.light->getColor().confine() * factor;
+        return coll.light->getColor() * factor;
     else
     {
         Color ret, absorb(1, 1, 1);

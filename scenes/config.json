@@ -13,7 +13,7 @@
 	"ppm_alpha" : 0.666667,
 	"ppm_initial_search_radius" : 0.05,
 	"ppm_iteration_depth" : 1000,
-	"ppm_photon_emitted_number" : 10000,
+	"ppm_photon_emitted_number" : 100000,
 	"raytracing_max_depth" : 20,
 	"raytracing_min_weight" : 0.05,
 	"soft_shadow_samples" : 4

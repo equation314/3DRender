@@ -27,5 +27,5 @@ Color PhotonMapper::m_calcLocalIllumination(const Collision& coll, const Materia
     if (Config::photon_map_only)
         return ret + color * m_scene->getAmbientLightColor() * factor * material->diff;
     else
-        return ret + RayTracer::m_calcLocalIllumination(coll, material, factor) / 4;
+        return ret + RayTracer::m_calcLocalIllumination(coll, material, factor);
 }

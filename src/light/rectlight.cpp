@@ -45,7 +45,7 @@ double RectLight::getShadowRatio(const Scene* scene, const Vector3& p) const
 Photon RectLight::emitPhoton(double power) const
 {
     return Photon(m_o + m_dx * (2 * Const::randDouble() - 1) + m_dy * (2 * Const::randDouble() - 1),
-                  m_n.diffuse(), m_color * (power / m_color.power()));
+                  m_n.diffuse(), m_color * power);
 }
 
 Json::Value RectLight::toJson() const

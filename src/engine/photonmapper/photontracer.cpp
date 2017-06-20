@@ -12,13 +12,13 @@ void PhotonTracer::emitPhotons(int photonNumber)
 {
     double power = 0;
     for (auto l = m_scene->lightsBegin(); l != m_scene->lightsEnd(); l++)
-        power += (*l)->getColor().power();
+        power += (*l)->getPower();
     power /= photonNumber;
 
     int tot = 0;
     for (auto l = m_scene->lightsBegin(); l != m_scene->lightsEnd(); l++)
     {
-        double lightPower = (*l)->getColor().power();
+        double lightPower = (*l)->getPower();
         for (; lightPower > 0; lightPower -= power)
         {
             Photon photon = (*l)->emitPhoton(power * photonNumber);
