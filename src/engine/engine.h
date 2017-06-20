@@ -5,6 +5,7 @@
 
 class RayTracer;
 class PhotonMapper;
+class PPM;
 
 class Engine
 {
@@ -17,6 +18,7 @@ protected:
     Engine(Scene* scene);
 
     Scene* m_scene;
+    Camera* m_camera;
 };
 
 #endif // ENGINE_H

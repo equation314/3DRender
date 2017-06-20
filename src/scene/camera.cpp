@@ -59,6 +59,20 @@ void Camera::print(const std::string& file) const
     m_film->save(file);
 }
 
+Bmp* Camera::copyFilm() const
+{
+    Bmp* bmp = new Bmp(m_w, m_h);
+    for (int i = 0; i < m_w; i++)
+        for (int j = 0; j < m_h; j++) bmp->setColor(i, j, getColor(i, j));
+    return bmp;
+}
+
+void Camera::setFilm(const Bmp* film)
+{
+    for (int i = 0; i < m_w; i++)
+        for (int j = 0; j < m_h; j++) setColor(i, j, film->getColor(i, j));
+}
+
 void Camera::m_init()
 {
     m_dw = (m_dir * m_up).unitize() * tan(m_fovy / 2) * (1.0 * m_w / m_h);

@@ -4,6 +4,8 @@
 #include "common/bmp.h"
 #include "common/color.h"
 
+struct Vector3;
+
 struct Material
 {
 public:
@@ -41,6 +43,9 @@ public:
 
     // 求交时的优先级
     bool compare(const Material* B) const;
+
+    // BRDF 函数值
+    double BRDF(const Vector3& l, const Vector3& n, const Vector3& v) const;
 
     virtual Json::Value toJson() const;
 

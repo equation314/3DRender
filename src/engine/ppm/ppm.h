@@ -1,24 +1,24 @@
-#ifndef PHOTONMAPPER_H
-#define PHOTONMAPPER_H
+#ifndef PPM_H
+#define PPM_H
 
 #include "engine/raytracer/raytracer.h"
 
-class PhotonMap;
-class PhotonTracer;
+class HitPointMap;
 
-class PhotonMapper : public RayTracer
+class PPM : public RayTracer
 {
 public:
-    PhotonMapper(Scene* scene)
+    PPM(Scene* scene)
         : RayTracer(scene) {}
-    virtual ~PhotonMapper() {}
+    virtual ~PPM() {}
 
     virtual void run(const std::string& outFile) override;
 
 private:
-    PhotonMap* m_map;
+    HitPointMap* m_map;
+    int m_pixel_x, m_pixel_y; // eye tracing 时的像素位置
 
     virtual Color m_calcLocalIllumination(const Collision& coll, const Material* Material, const Color& factor) const override;
 };
 
-#endif // PHOTONMAPPER_H
+#endif // PPM_H

@@ -8,9 +8,7 @@
 void RayTracer::run(const std::string& outFile)
 {
     if (!m_scene) return;
-
-    Camera* camera = m_scene->getCamera();
-    int w = camera->getW(), h = camera->getH();
+    int w = m_camera->getW(), h = m_camera->getH();
 
     cout << "Ray tracing..." << endl;
     clock_t lastRefreshTime = clock();
@@ -19,102 +17,110 @@ void RayTracer::run(const std::string& outFile)
         for (int j = 0; j < h; j++)
         {
             if (!j) cout << "column " << i << endl;
-            Vector3 dir = camera->emit(i, j);
-            Color color = m_rayTracing(camera->getEye(), dir, 1, 1, false);
-            camera->setColor(i, j, color);
+            Vector3 dir = m_camera->emit(i, j);
+            Color color = m_rayTracing(m_camera->getEye(), dir, Color(1, 1, 1), 1, 1, false).confine();
+            m_camera->setColor(i, j, color);
         }
         if (Config::output_refresh_interval > 0 &&
             clock() - lastRefreshTime > Config::output_refresh_interval * CLOCKS_PER_SEC)
         {
             lastRefreshTime = clock();
-            camera->print(outFile.c_str());
+            m_camera->print(outFile.c_str());
         }
     }
 
-    camera->print(outFile.c_str());
+    m_camera->print(outFile.c_str());
 
     if (Config::anti_aliasing_samples)
     {
         cout << "Smoothing..." << endl;
-        int samples = Config::anti_aliasing_samples;
-        std::vector<pair<int, int>> list = camera->detectEdge();
+        std::vector<pair<int, int>> list = m_camera->detectEdge();
         lastRefreshTime = clock();
         for (size_t t = 0; t < list.size(); t++)
         {
             if (!t || list[t].first != list[t - 1].first)
                 cout << "column " << list[t].first << endl;
 
-            int tot = 0;
-            Color color;
-            for (int i = 0; i < samples * 2; i++)
-                for (int j = 0; j < samples * 2; j++)
-                {
-                    // 旋转网格采样
-                    double a = atan(0.5);
-                    double x = (i + 0.5) / samples - 1,
-                           y = (j + 0.5) / samples - 1;
-                    double dx = x * cos(a) - y * sin(a),
-                           dy = x * sin(a) + y * cos(a);
-                    if (dx > -0.5 && dx < 0.5 && dy > -0.5 && dy < 0.5)
-                    {
-                        Vector3 dir = camera->emit(list[t].first + dx, list[t].second + dy);
-                        color += m_rayTracing(camera->getEye(), dir, 1, 1, false);
-                        tot++;
-                    }
-                }
-            camera->setColor(list[t].first, list[t].second, color / tot);
+            m_camera->setColor(list[t].first, list[t].second, m_samplingColor(list[t].first, list[t].second));
 
             if (Config::output_refresh_interval > 0 &&
                 clock() - lastRefreshTime > Config::output_refresh_interval * CLOCKS_PER_SEC)
             {
                 lastRefreshTime = clock();
-                camera->print(outFile.c_str());
+                m_camera->print(outFile.c_str());
             }
         }
 
-        camera->print(outFile.c_str());
+        m_camera->print(outFile.c_str());
     }
 }
 
-Color RayTracer::m_calcLocalIllumination(const Collision& coll, const Material* material) const
+Color RayTracer::m_samplingColor(int ox, int oy) const
 {
-    Vector3 r = coll.ray_dir.reflect(coll.n);
+    if (!Config::anti_aliasing_samples)
+        return m_rayTracing(m_camera->getEye(), m_camera->emit(ox, oy), Color(1, 1, 1), 1, 1, false).confine();
+
+    std::vector<pair<double, double>> points;
+    int samples = Config::anti_aliasing_samples;
+    for (int i = 0; i < samples * 2; i++)
+        for (int j = 0; j < samples * 2; j++)
+        {
+            // 旋转网格采样
+            double a = atan(0.5);
+            double x = (i + 0.5) / samples - 1,
+                   y = (j + 0.5) / samples - 1;
+            double dx = x * cos(a) - y * sin(a),
+                   dy = x * sin(a) + y * cos(a);
+            if (dx > -0.5 && dx < 0.5 && dy > -0.5 && dy < 0.5)
+                points.push_back(make_pair(ox + dx, oy + dy));
+        }
+    Color color;
+    for (auto p : points)
+    {
+        Vector3 dir = m_camera->emit(p.first, p.second);
+        color += m_rayTracing(m_camera->getEye(), dir, Color(1, 1, 1) / points.size(), 1, 1, false);
+    }
+    return color.confine();
+}
+
+Color RayTracer::m_calcLocalIllumination(const Collision& coll, const Material* material, const Color& factor) const
+{
     Color color = material->color * coll.object->getTextureColor(coll);
     Color ret = color * m_scene->getAmbientLightColor() * material->diff; // 环境光
     for (auto light = m_scene->lightsBegin(); light != m_scene->lightsEnd(); light++)
     {
         Vector3 l = ((*light)->getSource() - coll.p).unitize();
-        double f = l.dot(coll.n);
-        if (f < Const::EPS) continue;
-        double shade = (*light)->getShadowRatio(m_scene, coll.p);
-        if (shade < Const::EPS) continue;
+        if (l.dot(coll.n) < Const::EPS) continue;
 
-        if (material->diff > Const::EPS) // 漫反射
-            ret += color * (*light)->getColor() * (material->diff * f * shade);
-        if (material->spec > Const::EPS) // 镜面反射
-            ret += color * (*light)->getColor() * (material->spec * pow(l.dot(r), Config::hightlight_exponent));
+        double shade = (*light)->getShadowRatio(m_scene, coll.p);
+        if (shade > Const::EPS)
+            ret += color * (*light)->getColor() * material->BRDF(l, coll.n, coll.ray_dir) * shade;
     }
-    return ret;
+    return ret * factor;
 }
 
-Color RayTracer::m_rayTracing(const Vector3& start, const Vector3& dir, double weight, int depth, bool isInternal) const
+Color RayTracer::m_rayTracing(const Vector3& start, const Vector3& dir,
+                              const Color& factor, double weight, int depth, bool isInternal) const
 {
     if (weight < Config::raytracing_min_weight || depth > Config::raytracing_max_depth)
         return Color();
 
     Collision coll = m_scene->findNearestCollision(start, dir);
     if (!coll.isHit())
-        return m_scene->getAmbientLightColor();
+        return m_scene->getAmbientLightColor() * factor;
     else if (coll.atLight())
-        return coll.light->getColor();
+        return coll.light->getColor() * factor;
     else
     {
-        Color ret;
+        Color ret, absorb(1, 1, 1);
         const Object* obj = coll.object;
         const Material* material = obj->getMaterial();
 
+        // 透明材质的颜色过滤
+        if (isInternal) absorb = (material->absorb_color * -coll.dist).exp();
+
         if (material->diff > Const::EPS || material->spec > Const::EPS)
-            ret += m_calcLocalIllumination(coll, material);
+            ret += m_calcLocalIllumination(coll, material, factor * absorb);
         if (material->refl > Const::EPS || material->refr > Const::EPS)
         {
             double n = material->rindex;
@@ -122,14 +128,20 @@ Color RayTracer::m_rayTracing(const Vector3& start, const Vector3& dir, double w
             Vector3 refl = coll.ray_dir.reflect(coll.n);
             Vector3 refr = coll.ray_dir.refract(coll.n, n);
             if (material->refr < Const::EPS) // 全镜面反射
-                ret += m_rayTracing(coll.p, refl, weight * material->refl, depth + 1, isInternal) * (material->color * material->refl);
+                ret += m_rayTracing(coll.p, refl,
+                                    factor * absorb * (material->color * material->refl), weight * material->refl,
+                                    depth + 1, isInternal);
             else if (refr.mod2() < Const::EPS) // 全反射
             {
                 double k = material->refl + material->refr;
-                ret += m_rayTracing(coll.p, refl, weight * k, depth + 1, isInternal) * (material->color * k);
+                ret += m_rayTracing(coll.p, refl,
+                                    factor * absorb * (material->color * k), weight * k,
+                                    depth + 1, isInternal);
             }
             else if (material->refl < Const::EPS) // 全透射
-                ret += m_rayTracing(coll.p, refr, weight * material->refr, depth + 1, !isInternal) * material->refr;
+                ret += m_rayTracing(coll.p, refr,
+                                    factor * absorb * material->refr, weight * material->refr,
+                                    depth + 1, !isInternal);
             else
             {
                 double kl = material->refl, kr = material->refr;
@@ -141,15 +153,15 @@ Color RayTracer::m_rayTracing(const Vector3& start, const Vector3& dir, double w
                     kl = (r1 * r1 + r2 * r2) / 2, kr = 1 - kl;
                 }
 
-                if (kl > Const::EPS) ret += m_rayTracing(coll.p, refl, weight * kl, depth + 1, isInternal) * (material->color * kl);
-                if (kr > Const::EPS) ret += m_rayTracing(coll.p, refr, weight * kr, depth + 1, !isInternal) * kr;
+                if (kl > Const::EPS) ret += m_rayTracing(coll.p, refl,
+                                                         factor * absorb * (material->color * kl), weight * kl,
+                                                         depth + 1, isInternal);
+                if (kr > Const::EPS) ret += m_rayTracing(coll.p, refr,
+                                                         factor * absorb * kr, weight * kr,
+                                                         depth + 1, !isInternal);
             }
         }
 
-        // 透明材质的颜色过滤
-        if (isInternal)
-            ret *= (material->absorb_color * -coll.dist).exp();
-
-        return ret.confine();
+        return ret;
     }
 }

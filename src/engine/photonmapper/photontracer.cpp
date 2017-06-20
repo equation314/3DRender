@@ -1,33 +1,32 @@
 #include "common/config.h"
 #include "common/const.h"
+#include "engine/photonmapper/photonmap.h"
 #include "engine/photonmapper/photontracer.h"
+#include "engine/ppm/hitpointmap.h"
 #include "light/light.h"
 #include "object/material.h"
 #include "object/object.h"
 #include "scene/scene.h"
 
-PhotonMap* PhotonTracer::getPhotonMap()
+void PhotonTracer::emitPhotons(int photonNumber)
 {
-    if (m_map) delete m_map;
-    m_map = new PhotonMap();
     double power = 0;
-
     for (auto l = m_scene->lightsBegin(); l != m_scene->lightsEnd(); l++)
-        power += (*l)->getColor().power();
-    power /= Config::photon_number;
+        power += (*l)->getPower();
+    power /= photonNumber;
 
+    int tot = 0;
     for (auto l = m_scene->lightsBegin(); l != m_scene->lightsEnd(); l++)
     {
-        double lightPower = (*l)->getColor().power();
+        double lightPower = (*l)->getPower();
         for (; lightPower > 0; lightPower -= power)
         {
-            Photon photon = (*l)->emitPhoton(power);
+            Photon photon = (*l)->emitPhoton(power * photonNumber);
             m_photonTracing(photon, 1, false);
+            tot++;
+            if (tot % 10000 == 0) cout << "Emitted " << tot << " photons." << endl;
         }
     }
-
-    m_map->build();
-    return m_map;
 }
 
 void PhotonTracer::m_photonTracing(Photon& photon, int depth, bool isInternal)
@@ -40,7 +39,11 @@ void PhotonTracer::m_photonTracing(Photon& photon, int depth, bool isInternal)
         photon.pos = coll.p;
         const Object* obj = coll.object;
         const Material* material = obj->getMaterial();
-        if (material->diff > Const::EPS) m_map->addPhoton(photon);
+        if (material->diff > Const::EPS)
+        {
+            if (m_photon_map) m_photon_map->addPhoton(photon);
+            if (m_hit_point_map) m_hit_point_map->incomingPhoton(photon);
+        }
 
         Color cd = material->color * obj->getTextureColor(coll), ct(1, 1, 1);
         if (isInternal) // 透明材质的颜色过滤

@@ -11,13 +11,14 @@ class PointLight;
 class Light
 {
 public:
-    Light(const Color& c)
-        : m_color(c) {}
+    Light(const Color& c, double power = 1)
+        : m_color(c), m_power(power) {}
     Light(const Json::Value& light)
-        : m_color(light["color"]) {}
+        : m_color(light["color"]), m_power(light["power"].asDouble()) {}
     virtual ~Light() {}
 
     Color getColor() const { return m_color; }
+    double getPower() const { return m_power; }
 
     // 发光点
     virtual Vector3 getSource() const = 0;
@@ -38,7 +39,8 @@ public:
     static Light* loadFromJson(const Json::Value& value);
 
 protected:
-    Color m_color;
+    Color m_color;  // 光色
+    double m_power; // 光能
 };
 
 #endif // LIGHT_H

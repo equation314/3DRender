@@ -21,23 +21,35 @@ struct Config
     // 高光指数
     static int hightlight_exponent;
 
-    // 只使用光子图渲染
-    static bool photon_map_only;
-
-    // 发射光子数
-    static int photon_number;
-
-    // 采样光子数
-    static int photon_samples;
-
-    // 光子跟踪最大递归深度
-    static int photon_tracing_max_depth;
-
     // 牛顿迭代法深度
     static int newton_iteration_depth;
 
     // 输出图片的刷新间隔，单位秒，若值小于等于 0 则不时时刷新
     static double output_refresh_interval;
+
+    // 只使用光子图渲染
+    static bool photon_map_only;
+
+    // 发射光子数
+    static int photon_emitted_number;
+
+    // 采样光子数
+    static int photon_sampling_number;
+
+    // 光子跟踪最大递归深度
+    static int photon_tracing_max_depth;
+
+    // PPM 每轮迭代的衰减因子
+    static double ppm_alpha;
+
+    // PPM 初始搜索半径
+    static double ppm_initial_search_radius;
+
+    // PPM 迭代深度
+    static int ppm_iteration_depth;
+
+    // PPM 每轮发射光子数
+    static int ppm_photon_emitted_number;
 
     // 光线跟踪最大递归深度
     static int raytracing_max_depth;
