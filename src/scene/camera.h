@@ -37,6 +37,12 @@ public:
     // 打印照片到 file 文件
     void print(const std::string& file) const;
 
+    // 复制底片
+    Bmp* copyFilm() const;
+
+    // 重置底片为 BMP 文件
+    void setFilm(const Bmp* film);
+
     Json::Value toJson() const;
 
 private:

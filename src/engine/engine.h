@@ -5,6 +5,7 @@
 
 class RayTracer;
 class PhotonMapper;
+class PPM;
 
 class Engine
 {

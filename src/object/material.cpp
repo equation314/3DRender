@@ -1,4 +1,6 @@
+#include "common/config.h"
 #include "common/const.h"
+#include "common/vector3.h"
 #include "object/material.h"
 
 Material::Material()
@@ -54,6 +56,12 @@ bool Material::compare(const Material* B) const
 {
     return this->refl + Const::EPS < B->refl ||
            (abs(this->refl - B->refl) < Const::EPS && this->refr + Const::EPS < B->refr);
+}
+
+double Material::BRDF(const Vector3& l, const Vector3& n, const Vector3& v) const
+{
+    Vector3 r = l.reflect(n);
+    return diff * l.dot(n) + spec * pow(v.dot(r), Config::hightlight_exponent);
 }
 
 Json::Value Material::toJson() const

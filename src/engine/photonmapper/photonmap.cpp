@@ -87,7 +87,9 @@ void PhotonMap::m_build(int l, int r)
         k = 2;
     m_plane[mi] = k;
 
-    nth_element(m_photons + l, m_photons + mi, m_photons + r, [&](const Photon& x, const Photon& y) { return x.pos[k] < y.pos[k]; });
+    nth_element(m_photons + l, m_photons + mi, m_photons + r, [&](const Photon& x, const Photon& y) {
+        return x.pos[k] < y.pos[k];
+    });
     m_build(l, mi);
     m_build(mi + 1, r);
 }

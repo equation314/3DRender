@@ -20,7 +20,7 @@ void RayTracer::run(const std::string& outFile)
         {
             if (!j) cout << "column " << i << endl;
             Vector3 dir = camera->emit(i, j);
-            Color color = m_rayTracing(camera->getEye(), dir, 1, 1, false);
+            Color color = m_rayTracing(camera->getEye(), dir, Color(1, 1, 1), 1, 1, false).confine();
             camera->setColor(i, j, color);
         }
         if (Config::output_refresh_interval > 0 &&
@@ -58,7 +58,7 @@ void RayTracer::run(const std::string& outFile)
                     if (dx > -0.5 && dx < 0.5 && dy > -0.5 && dy < 0.5)
                     {
                         Vector3 dir = camera->emit(list[t].first + dx, list[t].second + dy);
-                        color += m_rayTracing(camera->getEye(), dir, 1, 1, false);
+                        color += m_rayTracing(camera->getEye(), dir, Color(1, 1, 1), 1, 1, false).confine();
                         tot++;
                     }
                 }
@@ -76,45 +76,44 @@ void RayTracer::run(const std::string& outFile)
     }
 }
 
-Color RayTracer::m_calcLocalIllumination(const Collision& coll, const Material* material) const
+Color RayTracer::m_calcLocalIllumination(const Collision& coll, const Material* material, const Color& factor) const
 {
-    Vector3 r = coll.ray_dir.reflect(coll.n);
     Color color = material->color * coll.object->getTextureColor(coll);
     Color ret = color * m_scene->getAmbientLightColor() * material->diff; // 环境光
     for (auto light = m_scene->lightsBegin(); light != m_scene->lightsEnd(); light++)
     {
         Vector3 l = ((*light)->getSource() - coll.p).unitize();
-        double f = l.dot(coll.n);
-        if (f < Const::EPS) continue;
-        double shade = (*light)->getShadowRatio(m_scene, coll.p);
-        if (shade < Const::EPS) continue;
+        if (l.dot(coll.n) < Const::EPS) continue;
 
-        if (material->diff > Const::EPS) // 漫反射
-            ret += color * (*light)->getColor() * (material->diff * f * shade);
-        if (material->spec > Const::EPS) // 镜面反射
-            ret += color * (*light)->getColor() * (material->spec * pow(l.dot(r), Config::hightlight_exponent));
+        double shade = (*light)->getShadowRatio(m_scene, coll.p);
+        if (shade > Const::EPS)
+            ret += color * (*light)->getColor() * material->BRDF(l, coll.n, coll.ray_dir) * shade;
     }
-    return ret;
+    return ret * factor;
 }
 
-Color RayTracer::m_rayTracing(const Vector3& start, const Vector3& dir, double weight, int depth, bool isInternal) const
+Color RayTracer::m_rayTracing(const Vector3& start, const Vector3& dir,
+                              const Color& factor, double weight, int depth, bool isInternal) const
 {
     if (weight < Config::raytracing_min_weight || depth > Config::raytracing_max_depth)
         return Color();
 
     Collision coll = m_scene->findNearestCollision(start, dir);
     if (!coll.isHit())
-        return m_scene->getAmbientLightColor();
+        return m_scene->getAmbientLightColor() * factor;
     else if (coll.atLight())
-        return coll.light->getColor();
+        return coll.light->getColor().confine() * factor;
     else
     {
-        Color ret;
+        Color ret, absorb(1, 1, 1);
         const Object* obj = coll.object;
         const Material* material = obj->getMaterial();
 
+        // 透明材质的颜色过滤
+        if (isInternal) absorb = (material->absorb_color * -coll.dist).exp();
+
         if (material->diff > Const::EPS || material->spec > Const::EPS)
-            ret += m_calcLocalIllumination(coll, material);
+            ret += m_calcLocalIllumination(coll, material, factor * absorb);
         if (material->refl > Const::EPS || material->refr > Const::EPS)
         {
             double n = material->rindex;
@@ -122,14 +121,20 @@ Color RayTracer::m_rayTracing(const Vector3& start, const Vector3& dir, double w
             Vector3 refl = coll.ray_dir.reflect(coll.n);
             Vector3 refr = coll.ray_dir.refract(coll.n, n);
             if (material->refr < Const::EPS) // 全镜面反射
-                ret += m_rayTracing(coll.p, refl, weight * material->refl, depth + 1, isInternal) * (material->color * material->refl);
+                ret += m_rayTracing(coll.p, refl,
+                                    factor * absorb * (material->color * material->refl), weight * material->refl,
+                                    depth + 1, isInternal);
             else if (refr.mod2() < Const::EPS) // 全反射
             {
                 double k = material->refl + material->refr;
-                ret += m_rayTracing(coll.p, refl, weight * k, depth + 1, isInternal) * (material->color * k);
+                ret += m_rayTracing(coll.p, refl,
+                                    factor * absorb * (material->color * k), weight * k,
+                                    depth + 1, isInternal);
             }
             else if (material->refl < Const::EPS) // 全透射
-                ret += m_rayTracing(coll.p, refr, weight * material->refr, depth + 1, !isInternal) * material->refr;
+                ret += m_rayTracing(coll.p, refr,
+                                    factor * absorb * material->refr, weight * material->refr,
+                                    depth + 1, !isInternal);
             else
             {
                 double kl = material->refl, kr = material->refr;
@@ -141,15 +146,15 @@ Color RayTracer::m_rayTracing(const Vector3& start, const Vector3& dir, double w
                     kl = (r1 * r1 + r2 * r2) / 2, kr = 1 - kl;
                 }
 
-                if (kl > Const::EPS) ret += m_rayTracing(coll.p, refl, weight * kl, depth + 1, isInternal) * (material->color * kl);
-                if (kr > Const::EPS) ret += m_rayTracing(coll.p, refr, weight * kr, depth + 1, !isInternal) * kr;
+                if (kl > Const::EPS) ret += m_rayTracing(coll.p, refl,
+                                                         factor * absorb * (material->color * kl), weight * kl,
+                                                         depth + 1, isInternal);
+                if (kr > Const::EPS) ret += m_rayTracing(coll.p, refr,
+                                                         factor * absorb * kr, weight * kr,
+                                                         depth + 1, !isInternal);
             }
         }
 
-        // 透明材质的颜色过滤
-        if (isInternal)
-            ret *= (material->absorb_color * -coll.dist).exp();
-
-        return ret.confine();
+        return ret;
     }
 }
