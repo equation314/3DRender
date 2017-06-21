@@ -1,5 +1,7 @@
 #include "common/vector2.h"
 
+#include <cstdio>
+
 Vector2::Vector2(const Json::Value& vec)
     : x(0), y(0)
 {

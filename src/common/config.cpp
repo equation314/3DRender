@@ -30,7 +30,7 @@ int Config::photon_tracing_max_depth = 10;
 
 double Config::ppm_alpha = 0.7;
 
-double Config::ppm_initial_search_radius = 1;
+double Config::ppm_initial_search_radius = 0.1;
 
 int Config::ppm_iteration_depth = 20;
 
