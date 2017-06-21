@@ -19,4 +19,9 @@ struct Ray
     Vector3 start, dir;
 };
 
+inline std::ostream& operator<<(std::ostream& out, const Ray& ray)
+{
+    return out << ray.start << " -> " << ray.dir;
+}
+
 #endif // RAY_H

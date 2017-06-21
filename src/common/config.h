@@ -12,6 +12,9 @@ struct Config
     // 抗锯齿采样数，若值为 0 不使用抗锯齿
     static int anti_aliasing_samples;
 
+    // 景深采样数，若值为 0 不使用景深
+    static int depth_of_field_samples;
+
     // 使用 Fresnel 方程计算反射和折射系数
     static bool enable_fresnel;
 

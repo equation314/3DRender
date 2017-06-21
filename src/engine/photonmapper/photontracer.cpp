@@ -24,7 +24,7 @@ void PhotonTracer::emitPhotons(int photonNumber)
             Photon photon = (*l)->emitPhoton(power * photonNumber);
             m_photonTracing(photon, 1, false);
             tot++;
-            if (tot % 10000 == 0) cout << "Emitted " << tot << " photons." << endl;
+            if (tot % 1000 == 0) cout << "Emitted " << tot << " photons." << endl;
         }
     }
 }

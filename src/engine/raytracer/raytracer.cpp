@@ -17,8 +17,7 @@ void RayTracer::run(const std::string& outFile)
         for (int j = 0; j < h; j++)
         {
             if (!j) cout << "column " << i << endl;
-            Color color = m_rayTracing(m_camera->emit(i, j), Color(1, 1, 1), 1, 1, false).confine();
-            m_camera->setColor(i, j, color);
+            m_camera->setColor(i, j, m_dofSamplingColor(i, j));
         }
         if (Config::output_refresh_interval > 0 &&
             clock() - lastRefreshTime > Config::output_refresh_interval * CLOCKS_PER_SEC)
@@ -54,10 +53,21 @@ void RayTracer::run(const std::string& outFile)
     }
 }
 
+Color RayTracer::m_dofSamplingColor(int ox, int oy, double factor) const
+{
+    if (!Config::depth_of_field_samples)
+        return m_rayTracing(m_camera->emit(ox, oy), Color(1, 1, 1) * factor, 1, 1, false);
+
+    Color color;
+    for (int i = 0; i < Config::depth_of_field_samples; i++)
+        color += m_rayTracing(m_camera->dofEmit(ox, oy), Color(1, 1, 1) * factor / Config::depth_of_field_samples, 1, 1, false);
+    return color;
+}
+
 Color RayTracer::m_samplingColor(int ox, int oy) const
 {
     if (!Config::anti_aliasing_samples)
-        return m_rayTracing(m_camera->emit(ox, oy), Color(1, 1, 1), 1, 1, false).confine();
+        return m_dofSamplingColor(ox, oy);
 
     std::vector<pair<double, double>> points;
     int samples = Config::anti_aliasing_samples;
@@ -75,8 +85,8 @@ Color RayTracer::m_samplingColor(int ox, int oy) const
         }
     Color color;
     for (auto p : points)
-        color += m_rayTracing(m_camera->emit(p.first, p.second), Color(1, 1, 1) / points.size(), 1, 1, false);
-    return color.confine();
+        color += m_dofSamplingColor(p.first, p.second, 1.0 / points.size());
+    return color;
 }
 
 Color RayTracer::m_calcLocalIllumination(const Collision& coll, const Material* material, const Color& factor) const

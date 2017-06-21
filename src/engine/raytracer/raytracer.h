@@ -20,7 +20,10 @@ protected:
     // 跟踪光线
     Color m_rayTracing(const Ray& ray, const Color& factor, double weight, int depth, bool isInternal) const;
 
-    // 采样颜色
+    // 景深采样
+    Color m_dofSamplingColor(int ox, int oy, double factor = 1) const;
+
+    // 抗锯齿采样
     Color m_samplingColor(int ox, int oy) const;
 };
 

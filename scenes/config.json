@@ -1,6 +1,7 @@
 {
 	"anti_aliasing_edge_threshold" : 0.01,
-	"anti_aliasing_samples" : 2,
+	"anti_aliasing_samples" : 0,
+	"depth_of_field_samples" : 16,
 	"enable_fresnel" : true,
 	"enable_texture_filtering" : true,
 	"hightlight_exponent" : 50,

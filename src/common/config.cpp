@@ -10,6 +10,8 @@ double Config::anti_aliasing_edge_threshold = 0.01;
 
 int Config::anti_aliasing_samples = 4;
 
+int Config::depth_of_field_samples = 64;
+
 bool Config::enable_fresnel = true;
 
 bool Config::enable_texture_filtering = true;
@@ -46,6 +48,7 @@ void Config::load(const Json::Value& config)
 {
     anti_aliasing_edge_threshold = config["anti_aliasing_edge_threshold"].asDouble();
     anti_aliasing_samples = config["anti_aliasing_samples"].asInt();
+    depth_of_field_samples = config["depth_of_field_samples"].asInt();
     enable_fresnel = config["enable_fresnel"].asBool();
     enable_texture_filtering = config["enable_texture_filtering"].asBool();
     hightlight_exponent = config["hightlight_exponent"].asInt();
@@ -69,6 +72,7 @@ Json::Value Config::toJson()
     Json::Value config;
     config["anti_aliasing_edge_threshold"] = anti_aliasing_edge_threshold;
     config["anti_aliasing_samples"] = anti_aliasing_samples;
+    config["depth_of_field_samples"] = depth_of_field_samples;
     config["enable_fresnel"] = enable_fresnel;
     config["enable_texture_filtering"] = enable_texture_filtering;
     config["hightlight_exponent"] = hightlight_exponent;

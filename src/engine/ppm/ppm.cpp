@@ -24,7 +24,6 @@ void PPM::run(const std::string& outFile)
     m_map->build();
 
     Bmp* film = m_camera->copyFilm();
-
     cout << "Start iteration..." << endl;
     PhotonTracer* tracer = new PhotonTracer(m_scene, m_map);
     for (int i = 0, tot = 0; i < Config::ppm_iteration_depth; i++)
@@ -37,9 +36,7 @@ void PPM::run(const std::string& outFile)
         m_camera->setFilm(film);
         for (auto p = m_map->hitPointBegin(); p != m_map->hitPointEnd(); p++)
         {
-            Color color = m_camera->getColor(p->x, p->y);
-            color += p->color * p->flux * (1 / Const::PI / p->r2 / tot);
-            color = color.confine();
+            Color color = m_camera->getColor(p->x, p->y) + p->color * p->flux * (1 / Const::PI / p->r2 / tot);
             m_camera->setColor(p->x, p->y, color);
         }
         m_camera->print(outFile.c_str());
