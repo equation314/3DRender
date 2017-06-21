@@ -7,8 +7,8 @@
 class RectLight : public Light
 {
 public:
-    RectLight(const Color& c, const Vector3& o, const Vector3& n, const Vector3& dx, const Vector3& dy)
-        : Light(c), m_o(o), m_n(n), m_dx(dx), m_dy(dy) {}
+    RectLight(const Color& c, const Vector3& o, const Vector3& n, const Vector3& dx, const Vector3& dy, double power = 1)
+        : Light(c, power), m_o(o), m_n(n), m_dx(dx), m_dy(dy) {}
     RectLight(const Json::Value& light)
         : Light(light), m_o(light["o"]), m_n(light["n"]), m_dx(light["dx"]), m_dy(light["dy"]) {}
 

@@ -11,7 +11,7 @@ class Camera;
 class Scene
 {
 public:
-    Scene(Camera* camera);
+    Scene(Camera* camera, const Color& ambient = Color());
     Scene(const Json::Value& scene);
     ~Scene();
 

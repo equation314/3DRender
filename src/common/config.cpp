@@ -38,7 +38,7 @@ int Config::ppm_photon_emitted_number = 100000;
 
 int Config::newton_iteration_depth = 20;
 
-double Config::output_refresh_interval = 0.1;
+double Config::output_refresh_interval = 1;
 
 int Config::raytracing_max_depth = 20;
 
