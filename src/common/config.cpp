@@ -46,6 +46,8 @@ double Config::raytracing_min_weight = 0.05;
 
 int Config::soft_shadow_samples = 4;
 
+int Config::thread_max_number = 4;
+
 void Config::load(const Json::Value& config)
 {
     anti_aliasing_edge_threshold = config["anti_aliasing_edge_threshold"].asDouble();
@@ -68,6 +70,7 @@ void Config::load(const Json::Value& config)
     raytracing_max_depth = config["raytracing_max_depth"].asInt();
     raytracing_min_weight = config["raytracing_min_weight"].asDouble();
     soft_shadow_samples = config["soft_shadow_samples"].asInt();
+    thread_max_number = config["thread_max_number"].asInt();
 }
 
 Json::Value Config::toJson()
@@ -93,6 +96,7 @@ Json::Value Config::toJson()
     config["raytracing_max_depth"] = raytracing_max_depth;
     config["raytracing_min_weight"] = raytracing_min_weight;
     config["soft_shadow_samples"] = soft_shadow_samples;
+    config["thread_max_number"] = thread_max_number;
     return config;
 }
 

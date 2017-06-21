@@ -66,6 +66,9 @@ struct Config
     // 软阴影采样数
     static int soft_shadow_samples;
 
+    // 最大线程数
+    static int thread_max_number;
+
     // 保存为 JSON 格式
     static Json::Value toJson();
 

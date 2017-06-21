@@ -8,25 +8,40 @@
 #include "object/object.h"
 #include "scene/scene.h"
 
+#include <mutex>
+#include <thread>
+
 void PhotonTracer::emitPhotons(int photonNumber)
 {
-    double power = 0;
+    double totPower = 0;
     for (auto l = m_scene->lightsBegin(); l != m_scene->lightsEnd(); l++)
-        power += (*l)->getPower();
-    power /= photonNumber;
+        totPower += (*l)->getPower();
 
-    int tot = 0;
-    for (auto l = m_scene->lightsBegin(); l != m_scene->lightsEnd(); l++)
+    mutex lock;
+    int tot = 0, threads = Config::thread_max_number;
+    std::vector<std::thread> threadPool;
+    if (m_photon_map) threads = 1;
+    for (int i = 0; i < threads; i++)
     {
-        double lightPower = (*l)->getPower();
-        for (; lightPower > 0; lightPower -= power)
-        {
-            Photon photon = (*l)->emitPhoton(power * photonNumber);
-            m_photonTracing(photon, 1, false);
-            tot++;
-            if (tot % 1000 == 0) cout << "Emitted " << tot << " photons." << endl;
-        }
+        double deltaPower = totPower / (photonNumber / threads);
+        threadPool.push_back(std::thread([this, totPower, deltaPower, &tot, &lock]() {
+            for (auto l = m_scene->lightsBegin(); l != m_scene->lightsEnd(); l++)
+            {
+                double lightPower = (*l)->getPower();
+                for (; lightPower > 0; lightPower -= deltaPower)
+                {
+                    Photon photon = (*l)->emitPhoton(totPower);
+                    m_photonTracing(photon, 1, false);
+
+                    lock.lock();
+                    if (++tot % 1000 == 0) cout << "Emitted " << tot << " photons." << endl;
+                    lock.unlock();
+                }
+            }
+        }));
     }
+
+    for (int i = 0; i < threads; i++) threadPool[i].join();
 }
 
 void PhotonTracer::m_photonTracing(Photon& photon, int depth, bool isInternal)

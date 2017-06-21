@@ -13,9 +13,7 @@ HitPointMap::~HitPointMap()
 
 void HitPointMap::incomingPhoton(const Photon& photon)
 {
-    m_photon = photon;
-    m_pos = photon.pos;
-    m_findNearHitPoints(0, m_n);
+    m_findNearHitPoints(0, m_n, photon);
 }
 
 void HitPointMap::build()
@@ -45,27 +43,28 @@ void HitPointMap::update()
     m_rebuild(0, m_n);
 }
 
-void HitPointMap::m_findNearHitPoints(int l, int r)
+void HitPointMap::m_findNearHitPoints(int l, int r, const Photon& photon)
 {
     if (l >= r) return;
     int mi = (l + r) >> 1, k = m_plane[mi];
+    Vector3 pos = photon.pos;
 
-    if (m_pos.x < m_nodes[mi].x1 || m_pos.x > m_nodes[mi].x2 ||
-        m_pos.y < m_nodes[mi].y1 || m_pos.y > m_nodes[mi].y2 ||
-        m_pos.z < m_nodes[mi].z1 || m_pos.z > m_nodes[mi].z2) return;
+    if (pos.x < m_nodes[mi].x1 || pos.x > m_nodes[mi].x2 ||
+        pos.y < m_nodes[mi].y1 || pos.y > m_nodes[mi].y2 ||
+        pos.z < m_nodes[mi].z1 || pos.z > m_nodes[mi].z2) return;
 
-    if ((m_pos - m_nodes[mi].point->pos).mod2() <= m_nodes[mi].point->r2)
-        m_nodes[mi].point->update(m_photon);
+    if ((pos - m_nodes[mi].point->pos).mod2() <= m_nodes[mi].point->r2)
+        m_nodes[mi].point->update(photon);
 
-    if (m_pos[k] - m_nodes[mi].point->pos[k] < 0)
+    if (pos[k] - m_nodes[mi].point->pos[k] < 0)
     {
-        m_findNearHitPoints(l, mi);
-        m_findNearHitPoints(mi + 1, r);
+        m_findNearHitPoints(l, mi, photon);
+        m_findNearHitPoints(mi + 1, r, photon);
     }
     else
     {
-        m_findNearHitPoints(mi + 1, r);
-        m_findNearHitPoints(l, mi);
+        m_findNearHitPoints(mi + 1, r, photon);
+        m_findNearHitPoints(l, mi, photon);
     }
 }
 

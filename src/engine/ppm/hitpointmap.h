@@ -81,9 +81,6 @@ private:
     Node* m_nodes;
     std::vector<HitPoint> m_points;
 
-    Photon m_photon; // 进入的光子
-    Vector3 m_pos;   // 光子位置
-
     // 建 KD-tree
     void m_build(int l, int r);
 
@@ -91,7 +88,7 @@ private:
     void m_rebuild(int l, int r);
 
     // 找所有距离不超过 sqrt(r2) 的 hit point
-    void m_findNearHitPoints(int l, int r);
+    void m_findNearHitPoints(int l, int r, const Photon& photon);
 };
 
 #endif // HITPOINTMAP_H

@@ -18,5 +18,6 @@
 	"ppm_photon_emitted_number" : 10000,
 	"raytracing_max_depth" : 20,
 	"raytracing_min_weight" : 0.05,
-	"soft_shadow_samples" : 4
+	"soft_shadow_samples" : 4,
+	"thread_max_number" : 4
 }
