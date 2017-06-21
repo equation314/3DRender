@@ -9,6 +9,9 @@ struct Config
     // 抗锯齿时边缘检测的阈值，若值为 0 全图采样
     static double anti_aliasing_edge_threshold;
 
+    // 抗锯齿边缘识别模式，0 为根据光线跟踪过程自动识别，1 为根据颜色差识别，其他值为全图采样
+    static int anti_aliasing_edge_detection_mode;
+
     // 抗锯齿采样数，若值为 0 不使用抗锯齿
     static int anti_aliasing_samples;
 

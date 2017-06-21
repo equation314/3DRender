@@ -88,9 +88,9 @@ Collision RotationBody::collide(const Ray& ray) const
         Vector2 v = (uray.get(res.x) - m_o).toVector2().unitize(), dp = m_curves[curve_id].dP(res.y);
         Vector3 n = Vector3(-dp.y * v.x, -dp.y * v.y, dp.x);
         if (n.dot(d) < Const::EPS)
-            return Collision(uray, res.x, curve_id + res.y, fmod(v.arg(), 2 * Const::PI), n, this);
+            return Collision(uray, res.x, curve_id + res.y, fmod(v.arg(), 2 * Const::PI), n, this, m_identifiers[curve_id]);
         else
-            return Collision(uray, res.x, curve_id + res.y, fmod(v.arg(), 2 * Const::PI), -n, this);
+            return Collision(uray, res.x, curve_id + res.y, fmod(v.arg(), 2 * Const::PI), -n, this, m_identifiers[curve_id]);
     }
     else
         return Collision();
@@ -155,6 +155,7 @@ void RotationBody::m_init()
         double r = std::max(abs(c.L), abs(c.R));
         m_r = std::max(m_r, r), m_h = std::max(m_h, c.U);
         m_sub_cylinders.push_back(new Cylinder(Vector3(m_o.x, m_o.y, m_o.z + c.D), r, c.U - c.D));
+        m_identifiers.push_back(Const::randUInt64());
     }
     m_bounding_cylinder = new Cylinder(m_o, m_r, m_h);
 }

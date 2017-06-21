@@ -14,7 +14,9 @@ class Object
 public:
     virtual ~Object();
 
+    uint64 getIdentifier() const { return m_identifier; }
     const Material* getMaterial() const { return m_material; }
+
     virtual std::string getType() const = 0;
 
     // 与视线相交
@@ -40,6 +42,7 @@ protected:
     Object(const Json::Value& object);
 
     const Material* m_material;
+    uint64 m_identifier; // 标识符
 
 private:
     bool m_can_delete_material;

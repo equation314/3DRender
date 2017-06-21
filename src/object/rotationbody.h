@@ -44,6 +44,7 @@ private:
     double m_r, m_h, m_arg;                 // 包围圆柱体的底面半径、高，纹理起点极角
     Cylinder* m_bounding_cylinder;          // 包围圆柱体
     std::vector<Cylinder*> m_sub_cylinders; // 子旋转面的包围圆柱体
+    std::vector<uint64> m_identifiers;      // 每个子旋转都有标识符
 
     void m_init();
 

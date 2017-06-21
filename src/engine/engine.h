@@ -19,6 +19,7 @@ protected:
 
     Scene* m_scene;
     Camera* m_camera;
+    int m_w, m_h;
 };
 
 #endif // ENGINE_H

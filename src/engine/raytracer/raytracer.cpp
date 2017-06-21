@@ -3,21 +3,47 @@
 #include "engine/raytracer/raytracer.h"
 #include "scene/camera.h"
 
+#include <algorithm>
 #include <ctime>
+
+RayTracer::RayTracer(Scene* scene)
+    : Engine(scene)
+{
+    if (scene)
+    {
+        m_hash = new uint64*[m_w];
+        m_is_edge = new bool*[m_w];
+        for (int i = 0; i < m_w; i++)
+        {
+            m_hash[i] = new uint64[m_h];
+            m_is_edge[i] = new bool[m_h];
+        }
+    }
+}
+
+RayTracer::~RayTracer()
+{
+    if (m_scene)
+    {
+        for (int i = 0; i < m_w; i++) delete[] m_hash[i];
+        delete[] m_hash;
+    }
+}
 
 void RayTracer::run(const std::string& outFile)
 {
     if (!m_scene) return;
-    int w = m_camera->getW(), h = m_camera->getH();
 
     cout << "Ray tracing..." << endl;
     clock_t lastRefreshTime = clock();
-    for (int i = 0; i < w; i++)
+    for (int i = 0; i < m_w; i++)
     {
-        for (int j = 0; j < h; j++)
+        for (int j = 0; j < m_h; j++)
         {
             if (!j) cout << "column " << i << endl;
-            m_camera->setColor(i, j, m_dofSamplingColor(i, j));
+            m_pixel_x = i, m_pixel_y = j;
+            m_hash[i][j] = 0;
+            m_camera->setColor(i, j, m_DOFSamplingColor(i, j));
         }
         if (Config::output_refresh_interval > 0 &&
             clock() - lastRefreshTime > Config::output_refresh_interval * CLOCKS_PER_SEC)
@@ -32,14 +58,44 @@ void RayTracer::run(const std::string& outFile)
     if (Config::anti_aliasing_samples)
     {
         cout << "Smoothing..." << endl;
-        std::vector<pair<int, int>> list = m_camera->detectEdge();
+
+        std::vector<pair<int, int>> list;
+        switch (Config::anti_aliasing_edge_detection_mode)
+        {
+        case 0:
+            for (int i = 0; i < m_w; i++)
+                for (int j = 0; j < m_h; j++)
+                {
+                    m_is_edge[i][j] = false;
+                    if (i < m_w - 1 && j < m_h - 1)
+                        if (m_hash[i][j] != m_hash[i + 1][j + 1] || m_hash[i + 1][j] != m_hash[i][j + 1])
+                        {
+                            list.push_back(make_pair(i, j));
+                            list.push_back(make_pair(i + 1, j + 1));
+                            list.push_back(make_pair(i + 1, j));
+                            list.push_back(make_pair(i, j + 1));
+                        }
+                }
+            sort(list.begin(), list.end());
+            list.erase(unique(list.begin(), list.end()), list.end());
+            break;
+        case 1:
+            list = m_camera->detectEdge();
+            break;
+        default:
+            for (int i = 0; i < m_w; i++)
+                for (int j = 0; j < m_h; j++) list.push_back(make_pair(i, j));
+            break;
+        }
+
         lastRefreshTime = clock();
         for (size_t t = 0; t < list.size(); t++)
         {
             if (!t || list[t].first != list[t - 1].first)
                 cout << "column " << list[t].first << endl;
 
-            m_camera->setColor(list[t].first, list[t].second, m_samplingColor(list[t].first, list[t].second));
+            m_is_edge[list[t].first][list[t].second] = true;
+            m_camera->setColor(list[t].first, list[t].second, m_AASamplingColor(list[t].first, list[t].second));
 
             if (Config::output_refresh_interval > 0 &&
                 clock() - lastRefreshTime > Config::output_refresh_interval * CLOCKS_PER_SEC)
@@ -53,7 +109,7 @@ void RayTracer::run(const std::string& outFile)
     }
 }
 
-Color RayTracer::m_dofSamplingColor(int ox, int oy, double factor) const
+Color RayTracer::m_DOFSamplingColor(double ox, double oy, double factor) const
 {
     if (!Config::depth_of_field_samples)
         return m_rayTracing(m_camera->emit(ox, oy), Color(1, 1, 1) * factor, 1, 1, false);
@@ -64,10 +120,11 @@ Color RayTracer::m_dofSamplingColor(int ox, int oy, double factor) const
     return color;
 }
 
-Color RayTracer::m_samplingColor(int ox, int oy) const
+Color RayTracer::m_AASamplingColor(int ox, int oy)
 {
+    m_pixel_x = ox, m_pixel_y = oy;
     if (!Config::anti_aliasing_samples)
-        return m_dofSamplingColor(ox, oy);
+        return m_DOFSamplingColor(ox, oy);
 
     std::vector<pair<double, double>> points;
     int samples = Config::anti_aliasing_samples;
@@ -85,7 +142,7 @@ Color RayTracer::m_samplingColor(int ox, int oy) const
         }
     Color color;
     for (auto p : points)
-        color += m_dofSamplingColor(p.first, p.second, 1.0 / points.size());
+        color += m_DOFSamplingColor(p.first, p.second, 1.0 / points.size());
     return color;
 }
 
@@ -114,12 +171,16 @@ Color RayTracer::m_rayTracing(const Ray& ray, const Color& factor, double weight
     if (!coll.isHit())
         return m_scene->getAmbientLightColor() * factor;
     else if (coll.atLight())
+    {
+        (m_hash[m_pixel_x][m_pixel_y] *= Const::HASH_BASE) += coll.object_identifier;
         return coll.light->getColor() * factor;
+    }
     else
     {
         Color ret, absorb(1, 1, 1);
         const Object* obj = coll.object;
         const Material* material = obj->getMaterial();
+        (m_hash[m_pixel_x][m_pixel_y] *= Const::HASH_BASE) += coll.object_identifier;
 
         // 透明材质的颜色过滤
         if (isInternal) absorb = (material->absorb_color * -coll.dist).exp();

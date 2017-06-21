@@ -16,7 +16,7 @@ public:
 
 private:
     HitPointMap* m_map;
-    int m_pixel_x, m_pixel_y; // eye tracing 时的像素位置
+    bool m_find_edge;
 
     virtual Color m_calcLocalIllumination(const Collision& coll, const Material* Material, const Color& factor) const override;
 };

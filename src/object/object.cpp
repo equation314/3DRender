@@ -11,12 +11,14 @@
 
 Object::Object(const Material* m)
     : m_material(m == nullptr ? new Material() : m),
+      m_identifier(Const::randUInt64()),
       m_can_delete_material(m == nullptr ? true : false)
 {
 }
 
 Object::Object(const Json::Value& object)
     : m_material(object["material"].isNull() ? new Material() : new Material(object["material"])),
+      m_identifier(Const::randUInt64()),
       m_can_delete_material(true)
 {
 }

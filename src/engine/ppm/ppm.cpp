@@ -9,21 +9,26 @@ void PPM::run(const std::string& outFile)
 {
     if (!m_scene) return;
     m_map = new HitPointMap();
-    int w = m_camera->getW(), h = m_camera->getH();
+
+    m_find_edge = true;
+    RayTracer::run(outFile);
+    m_find_edge = false;
 
     cout << "Eye tracing..." << endl;
-    for (int i = 0; i < w; i++)
-        for (int j = 0; j < h; j++)
+    for (int i = 0; i < m_w; i++)
+        for (int j = 0; j < m_h; j++)
         {
-            m_pixel_x = i, m_pixel_y = j;
             if (!j) cout << "column " << i << endl;
-            m_camera->setColor(i, j, m_samplingColor(i, j));
+            m_pixel_x = i, m_pixel_y = j;
+            if (m_is_edge[i][j])
+                m_camera->setColor(i, j, m_AASamplingColor(i, j));
+            else
+                m_camera->setColor(i, j, m_DOFSamplingColor(i, j));
         }
 
-    m_camera->print(outFile.c_str());
     m_map->build();
-
     Bmp* film = m_camera->copyFilm();
+
     cout << "Start iteration..." << endl;
     PhotonTracer* tracer = new PhotonTracer(m_scene, m_map);
     for (int i = 0, tot = 0; i < Config::ppm_iteration_depth; i++)
@@ -49,6 +54,9 @@ void PPM::run(const std::string& outFile)
 
 Color PPM::m_calcLocalIllumination(const Collision& coll, const Material* material, const Color& factor) const
 {
+    if (m_find_edge)
+        return RayTracer::m_calcLocalIllumination(coll, material, factor);
+
     HitPoint point;
     point.pos = coll.p;
     point.n = coll.n;
