@@ -58,17 +58,17 @@ Scene::~Scene()
     m_objects.clear();
 }
 
-Collision Scene::findNearestCollision(const Vector3& start, const Vector3& dir) const
+Collision Scene::findNearestCollision(const Ray& ray) const
 {
     Collision ret;
     for (auto l : m_lights)
     {
-        Collision coll = l->collide(start, dir);
+        Collision coll = l->collide(ray);
         if (coll.isHit() && coll.dist + Const::EPS < ret.dist) ret = coll;
     }
     for (auto o : m_objects)
     {
-        Collision coll = o->collide(start, dir);
+        Collision coll = o->collide(ray);
         if (coll.isHit() && coll.dist + Const::EPS < ret.dist) ret = coll;
     }
     return ret;

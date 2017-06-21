@@ -55,7 +55,7 @@ Color PPM::m_calcLocalIllumination(const Collision& coll, const Material* materi
     HitPoint point;
     point.pos = coll.p;
     point.n = coll.n;
-    point.dir = coll.ray_dir;
+    point.dir = coll.ray.dir;
     point.material = material;
     point.color = material->color * coll.object->getTextureColor(coll) * factor * material->diff;
     point.r2 = Config::ppm_initial_search_radius;

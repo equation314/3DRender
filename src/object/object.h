@@ -18,7 +18,7 @@ public:
     virtual std::string getType() const = 0;
 
     // 与视线相交
-    virtual Collision collide(const Vector3& start, const Vector3& dir) const = 0;
+    virtual Collision collide(const Ray& ray) const = 0;
 
     // 交点处的纹理颜色
     virtual Color getTextureColor(const Collision& coll) const = 0;

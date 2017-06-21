@@ -13,23 +13,23 @@ Sphere::Sphere(const Json::Value& object)
 {
 }
 
-Collision Sphere::collide(const Vector3& start, const Vector3& dir) const
+Collision Sphere::collide(const Ray& ray) const
 {
-    Vector3 d = dir.unitize();
-    Vector3 oc = m_o - start;
-    double tca = oc.dot(d), thc2 = m_r * m_r - oc.mod2() + tca * tca;
+    Ray uray = ray.unitize();
+    Vector3 oc = m_o - ray.start;
+    double tca = oc.dot(uray.dir), thc2 = m_r * m_r - oc.mod2() + tca * tca;
     if (thc2 >= 0)
     {
         double thc = sqrt(thc2), t1 = tca - thc, t2 = tca + thc;
         if (t1 > Const::EPS)
         {
-            Vector3 p = start + d * t1;
-            return Collision(start, d, t1, p - m_o, this, false);
+            Vector3 p = uray.get(t1);
+            return Collision(uray, t1, p - m_o, this, false);
         }
         else if (t2 > Const::EPS)
         {
-            Vector3 p = start + d * t2;
-            return Collision(start, d, t2, m_o - p, this, true);
+            Vector3 p = uray.get(t2);
+            return Collision(uray, t2, m_o - p, this, true);
         }
     }
 

@@ -1,6 +1,7 @@
 #ifndef RAYTRACER_H
 #define RAYTRACER_H
 
+#include "common/ray.h"
 #include "engine/engine.h"
 
 class RayTracer : public Engine
@@ -17,8 +18,7 @@ protected:
     virtual Color m_calcLocalIllumination(const Collision& coll, const Material* Material, const Color& factor) const;
 
     // 跟踪光线
-    Color m_rayTracing(const Vector3& start, const Vector3& dir,
-                       const Color& factor, double weight, int depth, bool isInternal) const;
+    Color m_rayTracing(const Ray& ray, const Color& factor, double weight, int depth, bool isInternal) const;
 
     // 采样颜色
     Color m_samplingColor(int ox, int oy) const;

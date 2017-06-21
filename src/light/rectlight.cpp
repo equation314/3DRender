@@ -4,16 +4,16 @@
 #include "object/object.h"
 #include "scene/scene.h"
 
-Collision RectLight::collide(const Vector3& start, const Vector3& dir) const
+Collision RectLight::collide(const Ray& ray) const
 {
     Vector3 n = m_dx * m_dy;
-    double d = n.dot(dir);
+    double d = n.dot(ray.dir);
     if (abs(d) < Const::EPS) return Collision();
-    double t = (n.dot(m_o) - n.dot(start)) / d;
+    double t = (n.dot(m_o) - n.dot(ray.start)) / d;
     if (t < Const::EPS) return Collision();
-    Vector3 p = start + dir * t - m_o;
+    Vector3 p = ray.get(t) - m_o;
     if (abs(p.dot(m_dx)) + Const::EPS < m_dx.mod2() && abs(p.dot(m_dy)) + Const::EPS < m_dy.mod2())
-        return Collision(start, dir, t, this);
+        return Collision(ray, t, this);
     else
         return Collision();
 }
@@ -31,7 +31,7 @@ double RectLight::getShadowRatio(const Scene* scene, const Vector3& p) const
 
             for (auto o = scene->objectsBegin(); o != scene->objectsEnd(); o++)
             {
-                Collision coll = (*o)->collide(p, dir);
+                Collision coll = (*o)->collide(Ray(p, dir));
                 if (coll.isHit() && coll.dist + Const::EPS < dist)
                 {
                     ret--;

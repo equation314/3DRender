@@ -26,21 +26,22 @@ RotationBody::~RotationBody()
     m_sub_cylinders.clear();
 }
 
-Collision RotationBody::collide(const Vector3& start, const Vector3& dir) const
+Collision RotationBody::collide(const Ray& ray) const
 {
-    Vector3 d = dir.unitize();
+    Ray uray = ray.unitize();
+    Vector3 d = uray.dir;
     int curve_id = 0;
     Vector2 res(1e9, 0);
 
-    Collision coll = m_bounding_cylinder->collide(start, d);
+    Collision coll = m_bounding_cylinder->collide(ray);
     if (!coll.isHit()) return Collision();
 
     for (size_t i = 0; i < m_curves.size(); i++)
     {
-        coll = m_sub_cylinders[i]->collide(start, d);
+        coll = m_sub_cylinders[i]->collide(ray);
         if (!coll.isHit() || (!coll.is_internal && coll.dist > res.x - Const::EPS)) continue;
 
-        Vector3 o = start - m_o;
+        Vector3 o = ray.start - m_o;
         Vector2 w = d.toVector2(), q0, q1, q2, q3;
         // A.y^2 + B.y + C + D.x^2 = 0
         long double A = w.mod2(), B = 2 * w.dot(o.toVector2()) * d.z - 2 * o.z * A,
@@ -84,12 +85,12 @@ Collision RotationBody::collide(const Vector3& start, const Vector3& dir) const
     }
     if (res.x < 1e9)
     {
-        Vector2 v = (start - m_o + d * res.x).toVector2().unitize(), dp = m_curves[curve_id].dP(res.y);
+        Vector2 v = (uray.get(res.x) - m_o).toVector2().unitize(), dp = m_curves[curve_id].dP(res.y);
         Vector3 n = Vector3(-dp.y * v.x, -dp.y * v.y, dp.x);
         if (n.dot(d) < Const::EPS)
-            return Collision(start, d, res.x, curve_id + res.y, fmod(v.arg(), 2 * Const::PI), n, this);
+            return Collision(uray, res.x, curve_id + res.y, fmod(v.arg(), 2 * Const::PI), n, this);
         else
-            return Collision(start, d, res.x, curve_id + res.y, fmod(v.arg(), 2 * Const::PI), -n, this);
+            return Collision(uray, res.x, curve_id + res.y, fmod(v.arg(), 2 * Const::PI), -n, this);
     }
     else
         return Collision();

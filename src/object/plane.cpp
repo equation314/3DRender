@@ -13,16 +13,16 @@ Plane::Plane(const Json::Value& object)
 {
 }
 
-Collision Plane::collide(const Vector3& start, const Vector3& dir) const
+Collision Plane::collide(const Ray& ray) const
 {
-    double n = m_n.dot(start) + m_d, d = m_n.dot(dir);
+    double n = m_n.dot(ray.start) + m_d, d = m_n.dot(ray.dir);
     if (abs(d) < Const::EPS) return Collision();
     double t = -n / d;
     if (t < Const::EPS) return Collision();
     if (n > Const::EPS)
-        return Collision(start, dir, t, m_n, this);
+        return Collision(ray, t, m_n, this);
     else
-        return Collision(start, dir, t, -m_n, this);
+        return Collision(ray, t, -m_n, this);
 }
 
 Color Plane::getTextureColor(const Collision& coll) const

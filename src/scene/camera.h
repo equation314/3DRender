@@ -2,7 +2,7 @@
 #define CAMERA_H
 
 #include "common/color.h"
-#include "common/vector3.h"
+#include "common/ray.h"
 
 #include <string>
 #include <vector>
@@ -21,7 +21,7 @@ public:
     Vector3 getEye() const { return m_eye; }
 
     // 像素点对应的光线方向
-    Vector3 emit(double x, double y) const;
+    Ray emit(double x, double y) const;
 
     Color getColor(int x, int y) const
     {

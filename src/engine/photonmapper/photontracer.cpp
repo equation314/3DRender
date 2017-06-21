@@ -33,7 +33,7 @@ void PhotonTracer::m_photonTracing(Photon& photon, int depth, bool isInternal)
 {
     if (depth > Config::photon_tracing_max_depth) return;
 
-    Collision coll = m_scene->findNearestCollision(photon.pos, photon.dir);
+    Collision coll = m_scene->findNearestCollision(Ray(photon.pos, photon.dir));
     if (coll.isHit() && coll.atObject())
     {
         photon.pos = coll.p;
@@ -64,7 +64,7 @@ void PhotonTracer::m_photonTracing(Photon& photon, int depth, bool isInternal)
         }
         else if (fortune < pd + ps) // 镜面反射
         {
-            photon.dir = coll.ray_dir.reflect(coll.n);
+            photon.dir = coll.ray.dir.reflect(coll.n);
             photon.pow *= cd / cd.power();
             m_photonTracing(photon, depth + 1, isInternal);
         }
@@ -72,7 +72,7 @@ void PhotonTracer::m_photonTracing(Photon& photon, int depth, bool isInternal)
         {
             double n = material->rindex;
             if (isInternal) n = 1 / n;
-            photon.dir = coll.ray_dir.refract(coll.n, n);
+            photon.dir = coll.ray.dir.refract(coll.n, n);
             photon.pow *= ct / ct.power();
             m_photonTracing(photon, depth + 1, !isInternal);
         }

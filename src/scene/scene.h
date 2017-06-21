@@ -29,7 +29,7 @@ public:
     std::vector<Object*>::const_iterator objectsEnd() const { return m_objects.end(); }
 
     // 寻找视线最先碰到的物体或光源
-    Collision findNearestCollision(const Vector3& start, const Vector3& dir) const;
+    Collision findNearestCollision(const Ray& ray) const;
 
     // 保存为 JSON 格式
     Json::Value toJson() const;
