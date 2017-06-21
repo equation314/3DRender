@@ -29,6 +29,11 @@ Camera::~Camera()
     delete[] m_color;
 }
 
+bool Camera::enableDOF() const
+{
+    return m_aperture > 0 && Config::depth_of_field_samples > 0;
+}
+
 Ray Camera::emit(double x, double y) const
 {
     return Ray(m_eye, m_dir + m_dw * (2.0 * x / m_w - 1) + m_dh * (2.0 * y / m_h - 1));
@@ -114,5 +119,10 @@ Json::Value Camera::toJson() const
     camera["fovy"] = m_fovy * 180 / Const::PI;
     camera["aperture"] = m_aperture;
     camera["focal_len"] = m_focal_len;
+    if (m_aperture > 0)
+    {
+        camera["aperture"] = m_aperture;
+        camera["focal_len"] = m_focal_len;
+    }
     return camera;
 }

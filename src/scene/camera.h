@@ -20,6 +20,8 @@ public:
     int getH() const { return m_h; }
     Vector3 getEye() const { return m_eye; }
 
+    bool enableDOF() const;
+
     // 像素点对应的光线方向
     Ray emit(double x, double y) const;
 

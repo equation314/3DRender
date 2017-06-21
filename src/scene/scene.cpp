@@ -16,8 +16,8 @@
 
 std::string Scene::m_scene_file_dir = "";
 
-Scene::Scene(Camera* camera)
-    : m_camera(camera), m_ambient_color(Color())
+Scene::Scene(Camera* camera, const Color& ambient)
+    : m_camera(camera), m_ambient_color(ambient)
 {
     m_init();
 }
@@ -83,6 +83,7 @@ Json::Value Scene::toJson() const
     scene["lights"] = lights;
     scene["objects"] = objects;
     scene["camera"] = m_camera->toJson();
+    scene["config"] = Config::toJson();
     return scene;
 }
 

@@ -111,7 +111,7 @@ void RayTracer::run(const std::string& outFile)
 
 Color RayTracer::m_DOFSamplingColor(double ox, double oy, double factor) const
 {
-    if (!Config::depth_of_field_samples)
+    if (!m_camera->enableDOF())
         return m_rayTracing(m_camera->emit(ox, oy), Color(1, 1, 1) * factor, 1, 1, false);
 
     Color color;

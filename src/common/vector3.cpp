@@ -1,5 +1,7 @@
 #include "common/vector3.h"
 
+#include <cstdio>
+
 Vector3::Vector3(const Json::Value& vec)
     : x(0), y(0), z(0)
 {
