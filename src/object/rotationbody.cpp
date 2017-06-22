@@ -153,11 +153,13 @@ void RotationBody::saveOBJ(const std::string& file, int density) const
 Json::Value RotationBody::toJson() const
 {
     Json::Value object = Object::toJson();
-    Json::Value curves;
+    Json::Value curves, ratios;
     for (auto c : m_curves) curves.append(c.toJson());
+    for (auto r : m_texture_ratios) ratios.append(r);
     object["type"] = "RotationBody";
     object["o"] = m_o.toJson();
     object["curves"] = curves;
+    object["texture_ratios"] = ratios;
     if (m_material->hasTexture()) object["texture_arg"] = m_arg * 180 / Const::PI;
     return object;
 }

@@ -26,6 +26,9 @@ public:
 
     virtual Json::Value toJson() const override;
 
+    // 设置底面中心点
+    void setO(const Vector3& o) { m_o = o; }
+
     // 设置纹理起点极角
     void setTextureArg(double a) { m_arg = a; }
 
