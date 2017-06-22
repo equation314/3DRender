@@ -1,0 +1,151 @@
+{
+	"ambient_color" : "(0.050000, 0.050000, 0.050000)",
+	"camera" :
+	{
+		"aperture" : 0.050000000000000003,
+		"eye" : "(-3.000000, -8.00000, 2.00000)",
+		"focal_len" : 6.7542579163073118,
+		"fovy" : 45,
+		"h" : 1080,
+		"look_at" : "(1.000000, 0.500000, 0.00000)",
+		"up" : "(0.000000, 0.000000, 1.000000)",
+		"w" : 1920
+	},
+	"config" :
+	{
+		"anti_aliasing_edge_detection_mode" : 0,
+		"anti_aliasing_edge_threshold" : 0.01,
+		"anti_aliasing_samples" : 4,
+		"depth_of_field_samples" : 0,
+		"enable_fresnel" : true,
+		"enable_texture_filtering" : true,
+		"hightlight_exponent" : 50,
+		"newton_iteration_depth" : 20,
+		"output_refresh_interval" : 1.0,
+		"photon_emitted_number" : 1000000,
+		"photon_map_only" : true,
+		"photon_sampling_number" : 1000,
+		"photon_tracing_max_depth" : 10,
+		"ppm_alpha" : 0.69999999999999996,
+		"ppm_initial_search_radius" : 0.4,
+		"ppm_iteration_depth" : 1000,
+		"ppm_photon_emitted_number" : 1000000,
+		"raytracing_max_depth" : 20,
+		"raytracing_min_weight" : 0.050000000000000003,
+		"soft_shadow_samples" : 4,
+		"thread_max_number" : 2
+	},
+	"lights" :
+	[
+		{
+			"color" : "(1.000000, 1.000000, 1.000000)",
+			"o" : "(-10.000000, -4.000000, 6.000000)",
+			"n" : "(0.000000, 0.000000, -1.000000)",
+			"dx" : "(5.000000, 0.000000, 0.000000)",
+			"dy" : "(0.000000, 5.000000, 0.000000)",
+			"power" : 4000.0,
+			"type" : "PointLight"
+		}
+	],
+	"objects" :
+	[
+		{
+			"d" : 1.0,
+			"material" :
+			{
+				"color" : "(1.000000, 1.000000, 1.000000)",
+				"diff" : 0.80000000000000002,
+				"spec" : 0.10000000000000001,
+				"texture" : "../textures/desktop_objects/wooden.bmp"
+			},
+			"n" : "(0.000000, 0.000000, 1.000000)",
+			"texture_dx" : "(20.000000, 0.000000, 0.000000)",
+			"texture_dy" : "(0.000000, 20.00000, 0.000000)",
+			"texture_o" : "(0.00000, 0.00000, 0.000000)",
+			"type" : "Plane"
+		},
+		{
+			"d" : 10.0,
+			"material" :
+			{
+				"color" : "(1.000000, 1.000000, 1.000000)",
+				"diff" : 0.80000000000000004,
+				"refl" : 0.00000000000000001,
+				"spec" : 0.00000000000000001,
+				"texture" : "../textures/desktop_objects/wall.bmp"
+			},
+			"n" : "(0.000000, -1.000000, 0.000000)",
+			"texture_dx" : "(5.000000, 0.000000, 0.000000)",
+			"texture_dy" : "(0.000000, 0.000000, 5.000000)",
+			"texture_o" : "(-10.000000, 0.000000, 0.000000)",
+			"type" : "Plane"
+		},
+		{
+			"d" : 35.0,
+			"material" :
+			{
+				"color" : "(1.000000, 1.000000, 1.000000)",
+				"diff" : 0.80000000000000004,
+				"refl" : 0.10000000000000001,
+				"spec" : 0.10000000000000001,
+				"texture" : "../textures/desktop_objects/wall.bmp"
+			},
+			"n" : "(-1.000000, 0.000000, 0.000000)",
+			"texture_dx" : "(5.000000, 0.000000, 0.000000)",
+			"texture_dy" : "(0.000000, 5.000000, 0.000000)",
+			"texture_o" : "(-10.000000, 0.000000, 0.000000)",
+			"type" : "Plane"
+		},
+		{
+			"d" : 50.0,
+			"material" :
+			{
+				"color" : "(1.000000, 1.000000, 1.000000)",
+				"diff" : 0.90000000000000002,
+				"spec" : 0.10000000000000001,
+				"texture" : "../textures/desktop_objects/wall.bmp"
+			},
+			"n" : "(0.000000, 0.000000, -1.000000)",
+			"texture_dx" : "(5.000000, 0.000000, 0.000000)",
+			"texture_dy" : "(0.000000, 5.000000, 0.000000)",
+			"texture_o" : "(-10.000000, 0.000000, 0.000000)",
+			"type" : "Plane"
+		},
+		{
+			"d" : 50.0,
+			"material" :
+			{
+				"color" : "(1.000000, 1.000000, 1.000000)",
+				"diff" : 0.80000000000000004,
+				"refl" : 0.00000000000000001,
+				"spec" : 0.10000000000000001,
+				"texture" : "../textures/desktop_objects/wall.bmp"
+			},
+			"n" : "(1.000000, 0.000000, 0.000000)",
+			"texture_dx" : "(5.000000, 0.000000, 0.000000)",
+			"texture_dy" : "(0.000000, 5.000000, 0.000000)",
+			"texture_o" : "(-10.000000, 0.000000, 0.000000)",
+			"type" : "Plane"
+		},
+		{
+			"d" : 50.0,
+			"material" :
+			{
+				"color" : "(1.000000, 1.000000, 1.000000)",
+				"diff" : 0.80000000000000004,
+				"refl" : 0.00000000000000001,
+				"spec" : 0.10000000000000001,
+				"texture" : "../textures/desktop_objects/wall.bmp"
+			},
+			"n" : "(0.000000, 1.000000, 0.000000)",
+			"texture_dx" : "(5.000000, 0.000000, 0.000000)",
+			"texture_dy" : "(0.000000, 5.000000, 0.000000)",
+			"texture_o" : "(-10.000000, 0.000000, 0.000000)",
+			"type" : "Plane"
+		},
+		"vase.json",
+		"bowl.json",
+		"plate.json",
+		"ellipsoid.json"
+	]
+}
