@@ -47,7 +47,7 @@
 		"spec" : 0.1,
 		"texture": "../textures/desktop_objects/bowl.bmp"
 	},
-	"o" : "(0, 2, -0.85)",
+	"o" : "(-0.5, 2.5, -0.85)",
 	"r" : 0.75,
 	"h" : 0.5,
 	"texture_arg" : 45,

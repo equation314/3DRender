@@ -3,7 +3,7 @@
 	"camera" :
 	{
 		"aperture" : 0.050000000000000003,
-		"eye" : "(-3.000000, -8.00000, 2.00000)",
+		"eye" : "(-3.000000, -8.00000, 2.50000)",
 		"focal_len" : 6.7542579163073118,
 		"fovy" : 45,
 		"h" : 1080,
@@ -15,7 +15,7 @@
 	{
 		"anti_aliasing_edge_detection_mode" : 0,
 		"anti_aliasing_edge_threshold" : 0.01,
-		"anti_aliasing_samples" : 4,
+		"anti_aliasing_samples" : 2,
 		"depth_of_field_samples" : 0,
 		"enable_fresnel" : true,
 		"enable_texture_filtering" : true,
@@ -27,13 +27,13 @@
 		"photon_sampling_number" : 1000,
 		"photon_tracing_max_depth" : 10,
 		"ppm_alpha" : 0.69999999999999996,
-		"ppm_initial_search_radius" : 0.4,
+		"ppm_initial_search_radius" : 0.2,
 		"ppm_iteration_depth" : 1000,
 		"ppm_photon_emitted_number" : 1000000,
 		"raytracing_max_depth" : 20,
 		"raytracing_min_weight" : 0.050000000000000003,
 		"soft_shadow_samples" : 4,
-		"thread_max_number" : 2
+		"thread_max_number" : 4
 	},
 	"lights" :
 	[
@@ -146,6 +146,7 @@
 		"vase.json",
 		"bowl.json",
 		"plate.json",
+		"glass.json",
 		"ellipsoid.json"
 	]
 }
