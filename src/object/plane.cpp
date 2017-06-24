@@ -20,9 +20,9 @@ Collision Plane::collide(const Ray& ray) const
     double t = -n / d;
     if (t < Const::EPS) return Collision();
     if (n > Const::EPS)
-        return Collision(ray, t, m_n, this);
+        return Collision(ray, t, m_n, this, false);
     else
-        return Collision(ray, t, -m_n, this);
+        return Collision(ray, t, -m_n, this, true);
 }
 
 Color Plane::getTextureColor(const Collision& coll) const

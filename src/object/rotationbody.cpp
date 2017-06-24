@@ -99,11 +99,11 @@ Collision RotationBody::collide(const Ray& ray) const
     if (res.x < 1e9)
     {
         Vector2 v = (uray.get(res.x) - m_o).toVector2().unitize(), dp = m_curves[curve_id].dP(res.y);
-        Vector3 n = Vector3(-dp.y * v.x, -dp.y * v.y, dp.x);
+        Vector3 n = Vector3(dp.y * v.x, dp.y * v.y, -dp.x);
         if (n.dot(d) < Const::EPS)
-            return Collision(uray, res.x, curve_id + res.y, fmod(v.arg(), 2 * Const::PI), n, this, m_identifiers[curve_id]);
+            return Collision(uray, res.x, curve_id + res.y, fmod(v.arg(), 2 * Const::PI), n, this, false, m_identifiers[curve_id]);
         else
-            return Collision(uray, res.x, curve_id + res.y, fmod(v.arg(), 2 * Const::PI), -n, this, m_identifiers[curve_id]);
+            return Collision(uray, res.x, curve_id + res.y, fmod(v.arg(), 2 * Const::PI), -n, this, true, m_identifiers[curve_id]);
     }
     else
         return Collision();

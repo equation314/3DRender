@@ -21,7 +21,7 @@ protected:
     virtual Color m_calcLocalIllumination(const Collision& coll, const Material* Material, const Color& factor) const;
 
     // 跟踪光线
-    Color m_rayTracing(const Ray& ray, const Color& factor, double weight, int depth, bool isInternal) const;
+    Color m_rayTracing(const Ray& ray, const Color& factor, double weight, int depth) const;
 
     // 景深采样
     Color m_DOFSamplingColor(double ox, double oy, double factor = 1) const;

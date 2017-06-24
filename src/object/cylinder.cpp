@@ -31,14 +31,14 @@ Collision Cylinder::collide(const Ray& ray) const
             Vector3 p = uray.get(t1);
             Vector2 q = (p - m_o).toVector2();
             if (q.mod2() < m_r * m_r + Const::EPS)
-                return Collision(uray, t1, u1, q.arg(), Vector3(0, 0, -d3.z), this, 0, in);
+                return Collision(uray, t1, u1, q.arg(), Vector3(0, 0, -d3.z), this, in);
         }
         else if (t2 > Const::EPS) // 若射线和第二个底面相交，且射线起点在圆柱体内，也直接返回
         {
             Vector3 p = uray.get(t2);
             Vector2 q = (p - m_o).toVector2();
             if (q.mod2() < m_r * m_r + Const::EPS && in)
-                return Collision(uray, t2, u2, q.arg(), Vector3(0, 0, -d3.z), this, 0, in);
+                return Collision(uray, t2, u2, q.arg(), Vector3(0, 0, -d3.z), this, in);
         }
         else // 若射线不和上下底面所在的平面相交，则无交点
             return Collision();
@@ -63,7 +63,7 @@ Collision Cylinder::collide(const Ray& ray) const
         Vector3 p = uray.get(t);
         if (m_o.z < p.z + Const::EPS && p.z < m_o.z + m_h + Const::EPS)
             return Collision(uray, t, (p.z - m_o.z) / m_h, (p - m_o).toVector2().arg(),
-                             Vector3(p.x - m_o.x, p.y - m_o.y, 0) * (in ? -1 : 1), this, 0, in);
+                             Vector3(p.x - m_o.x, p.y - m_o.y, 0) * (in ? -1 : 1), this, in);
     }
     return Collision();
 }

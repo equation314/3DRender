@@ -6,22 +6,22 @@
 		"eye" : "(-2.000000, -6.000000, 2.000000)",
 		"focal_len" : 6.7542579163073118,
 		"fovy" : 29.999999999999996,
-		"h" : 300,
+		"h" : 1080,
 		"look_at" : "(0.100000, 0.100000, 0.000000)",
 		"up" : "(0.000000, 0.000000, 1.000000)",
-		"w" : 480
+		"w" : 1920
 	},
 	"config" :
 	{
 		"anti_aliasing_edge_detection_mode" : 2,
 		"anti_aliasing_edge_threshold" : 0.01,
-		"anti_aliasing_samples" : 2,
-		"depth_of_field_samples" : 16,
+		"anti_aliasing_samples" : 4,
+		"depth_of_field_samples" : 0,
 		"enable_fresnel" : true,
 		"enable_texture_filtering" : true,
 		"hightlight_exponent" : 50,
 		"newton_iteration_depth" : 20,
-		"output_refresh_interval" : 1.0,
+		"output_refresh_interval" : 10.0,
 		"photon_emitted_number" : 1000000,
 		"photon_map_only" : true,
 		"photon_sampling_number" : 1000,
@@ -29,7 +29,7 @@
 		"ppm_alpha" : 0.69999999999999996,
 		"ppm_initial_search_radius" : 0.050000000000000003,
 		"ppm_iteration_depth" : 1000,
-		"ppm_photon_emitted_number" : 100000,
+		"ppm_photon_emitted_number" : 200000,
 		"raytracing_max_depth" : 20,
 		"raytracing_min_weight" : 0.050000000000000003,
 		"soft_shadow_samples" : 4,
@@ -560,6 +560,75 @@
 			},
 			"o" : "(1.500000, 0.300000, 0.572792)",
 			"r" : 0.29999999999999999,
+			"type" : "Sphere"
+		},
+		"glass.json",
+		// glass-water
+		{
+			"curves" :
+			[
+				[
+					"(0.0, 1.1)",
+					"(0.04, 1.1)",
+					"(0.464, 1.1)",
+					"(0.44768, 1.5608)"
+				]
+			],
+			"material" :
+			{
+				"absorb_color" : "(3.0, 3.0, 0.0)",
+				"color" : "(1, 1, 1)",
+				"diff" : 0,
+				"refl" : 0.2,
+				"refr" : 0.8,
+				"refr_index" : 0.866666666667,
+				"spec" : 0
+			},
+			"o" : "(-1.5, 0, -1.0)",
+			"r" : 0.75,
+			"h" : 0.5,
+			"texture_arg" : 90,
+			"type" : "RotationBody"
+		},
+		// air-water
+		{
+			"curves" :
+			[
+				[
+					"(0.44768, 1.5608)",
+					"(0.44768, 1.52)",
+					"(0.44, 1.52)",
+					"(0.0, 1.52)"
+				]
+			],
+			"material" :
+			{
+				"absorb_color" : "(3.0, 3.0, 0.0)",
+				"color" : "(1, 1, 1)",
+				"diff" : 0,
+				"refl" : 0.2,
+				"refr" : 0.8,
+				"refr_index" : 1.3,
+				"spec" : 0
+			},
+			"o" : "(-1.5, 0, -1.0)",
+			"r" : 0.75,
+			"h" : 0.5,
+			"texture_arg" : 90,
+			"type" : "RotationBody"
+		},
+		{
+			"h" : 1.5,
+			"material" :
+			{
+				"color" : "(1.000000, 1.0000000, 0.500000)",
+				"diff" : 0.7,
+				"refl" : 0.0,
+				"refr" : 0.0,
+				"spec" : 0.3
+			},
+			"o" : "(-1.500000, 0.00000, 0.400000)",
+			"r" : 0.2,
 			"type" : "Sphere"
 		}
 	]
