@@ -41,7 +41,7 @@
 		"spec" : 0.1,
 		"texture": "../textures/bowlings/bowling.bmp"
 	},
-	"o" : "(0, 2, -0.85)",
+	"o" : "(0, 0, 0)",
 	"r" : 0.75,
 	"h" : 0.5,
 	"texture_arg" : 45,
