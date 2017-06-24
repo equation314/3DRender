@@ -12,10 +12,10 @@ struct Collision
     Collision();
 
     // 与物体相交
-    Collision(const Ray& ray, double t, const Vector3& n, const Object* obj, uint64 idf = 0, bool in = false);
+    Collision(const Ray& ray, double t, const Vector3& n, const Object* obj, bool in, uint64 idf = 0);
 
     // 与物体相交，包含参数
-    Collision(const Ray& ray, double t, double u, double v, const Vector3& n, const Object* obj, uint64 idf = 0, bool in = false);
+    Collision(const Ray& ray, double t, double u, double v, const Vector3& n, const Object* obj, bool in, uint64 idf = 0);
 
     // 与光源相交
     Collision(const Ray& ray, double t, const Light* l);

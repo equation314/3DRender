@@ -7,7 +7,7 @@ Collision::Collision()
 {
 }
 
-Collision::Collision(const Ray& ray, double t, const Vector3& n, const Object* obj, uint64 idf, bool in)
+Collision::Collision(const Ray& ray, double t, const Vector3& n, const Object* obj, bool in, uint64 idf)
     : object(obj), light(nullptr),
       ray(ray.unitize()), p(ray.get(t)), n(n.unitize()),
       dist(t * ray.dir.mod()), is_internal(in),
@@ -15,7 +15,7 @@ Collision::Collision(const Ray& ray, double t, const Vector3& n, const Object* o
 {
 }
 
-Collision::Collision(const Ray& ray, double t, double u, double v, const Vector3& n, const Object* obj, uint64 idf, bool in)
+Collision::Collision(const Ray& ray, double t, double u, double v, const Vector3& n, const Object* obj, bool in, uint64 idf)
     : object(obj), light(nullptr),
       ray(ray.unitize()), p(ray.get(t)), n(n.unitize()),
       dist(t * ray.dir.mod()), u(u), v(v), is_internal(in),

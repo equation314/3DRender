@@ -1,0 +1,30 @@
+{
+	"curves" :
+	[
+		[
+			"(0, 0)",
+			"(1, 0)",
+			"(1, 1)",
+			"(0, 1)"
+		]
+	],
+	"texture_ratios" :
+	[
+		0.0, 0.75, 0.25, 0
+	],
+	"material" :
+	{
+		"absorb_color" : "(0.0, 0.0, 0.0)",
+		"color" : "(1, 1, 1)",
+		"diff" : 0,
+		"refl" : 0.2,
+		"refr" : 0.8,
+		"refr_index" : 1.5,
+		"spec" : 0
+	},
+	"o" : "(-0.5, -3.5, -1)",
+	"r" : 0.75,
+	"h" : 0.5,
+	"texture_arg" : 90,
+	"type" : "RotationBody"
+}

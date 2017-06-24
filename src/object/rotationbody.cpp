@@ -5,17 +5,30 @@
 
 RotationBody::RotationBody(const Vector3& o, const Curves& curves, const Material* m)
     : Object(m), m_o(o), m_curves(curves),
-      m_r(0), m_h(0), m_arg(0)
+      m_r(0), m_h(0), m_arg(0), m_texture_ratios()
 {
+    for (size_t i = 0; i < m_curves.size(); i++)
+        m_texture_ratios.push_back(1.0 / m_curves.size());
     m_init();
 }
 
 RotationBody::RotationBody(const Json::Value& object)
     : Object(object), m_o(object["o"]), m_curves(),
-      m_r(0), m_h(0), m_arg(fmod(object["texture_arg"].asDouble() / 180 * Const::PI, 2 * Const::PI))
+      m_r(0), m_h(0),
+      m_arg(fmod(object["texture_arg"].asDouble() / 180 * Const::PI, 2 * Const::PI)), m_texture_ratios()
 {
     for (auto c : object["curves"])
         m_curves.push_back(BezierCurve3(c));
+    if (object["texture_ratios"].isArray())
+    {
+        for (auto r : object["texture_ratios"])
+            m_texture_ratios.push_back(r.asDouble());
+    }
+    else
+    {
+        for (size_t i = 0; i < m_curves.size(); i++)
+            m_texture_ratios.push_back(1.0 / m_curves.size());
+    }
     m_init();
 }
 
@@ -86,11 +99,11 @@ Collision RotationBody::collide(const Ray& ray) const
     if (res.x < 1e9)
     {
         Vector2 v = (uray.get(res.x) - m_o).toVector2().unitize(), dp = m_curves[curve_id].dP(res.y);
-        Vector3 n = Vector3(-dp.y * v.x, -dp.y * v.y, dp.x);
+        Vector3 n = Vector3(dp.y * v.x, dp.y * v.y, -dp.x);
         if (n.dot(d) < Const::EPS)
-            return Collision(uray, res.x, curve_id + res.y, fmod(v.arg(), 2 * Const::PI), n, this, m_identifiers[curve_id]);
+            return Collision(uray, res.x, curve_id + res.y, fmod(v.arg(), 2 * Const::PI), n, this, false, m_identifiers[curve_id]);
         else
-            return Collision(uray, res.x, curve_id + res.y, fmod(v.arg(), 2 * Const::PI), -n, this, m_identifiers[curve_id]);
+            return Collision(uray, res.x, curve_id + res.y, fmod(v.arg(), 2 * Const::PI), -n, this, true, m_identifiers[curve_id]);
     }
     else
         return Collision();
@@ -100,8 +113,9 @@ Color RotationBody::getTextureColor(const Collision& coll) const
 {
     if (m_material->hasTexture())
     {
+        int id = coll.u;
         double u = fmod(coll.v - m_arg + 4 * Const::PI, 2 * Const::PI) / 2 / Const::PI,
-               v = 1 - coll.u / m_curves.size();
+               v = 1 - (m_texture_ratios_sum[id] + (coll.u - id) * m_texture_ratios[id]);
         return m_material->getTextureColor(u, v);
     }
     else
@@ -139,11 +153,13 @@ void RotationBody::saveOBJ(const std::string& file, int density) const
 Json::Value RotationBody::toJson() const
 {
     Json::Value object = Object::toJson();
-    Json::Value curves;
+    Json::Value curves, ratios;
     for (auto c : m_curves) curves.append(c.toJson());
+    for (auto r : m_texture_ratios) ratios.append(r);
     object["type"] = "RotationBody";
     object["o"] = m_o.toJson();
     object["curves"] = curves;
+    object["texture_ratios"] = ratios;
     if (m_material->hasTexture()) object["texture_arg"] = m_arg * 180 / Const::PI;
     return object;
 }
@@ -158,6 +174,11 @@ void RotationBody::m_init()
         m_identifiers.push_back(Const::randUInt64());
     }
     m_bounding_cylinder = new Cylinder(m_o, m_r, m_h);
+
+    double s = 0;
+    m_texture_ratios_sum.clear();
+    for (double r : m_texture_ratios)
+        m_texture_ratios_sum.push_back(s), s += r;
 }
 
 Vector3 RotationBody::m_dPdu(int i, double u, double v) const

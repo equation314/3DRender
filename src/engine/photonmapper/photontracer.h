@@ -27,7 +27,7 @@ private:
     HitPointMap* m_hit_point_map;
     Scene* m_scene;
 
-    void m_photonTracing(Photon& photon, int depth, bool isInternal);
+    void m_photonTracing(Photon& photon, int depth);
 };
 
 #endif // PHOTONTRACER_H

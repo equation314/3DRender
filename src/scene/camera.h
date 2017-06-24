@@ -12,7 +12,7 @@ class Bmp;
 class Camera
 {
 public:
-    Camera(const Vector3& eye, const Vector3& lookAt, const Vector3& up, int w, int h, double fovy, double aper = 0);
+    Camera(const Vector3& eye, const Vector3& lookAt, const Vector3& up, int w, int h, double fovy, double aper = 0, double focal = 0);
     Camera(const Json::Value& camera);
     ~Camera();
 

@@ -6,10 +6,11 @@
 
 #include <algorithm>
 
-Camera::Camera(const Vector3& eye, const Vector3& lookAt, const Vector3& up, int w, int h, double fovy, double aper)
+Camera::Camera(const Vector3& eye, const Vector3& lookAt, const Vector3& up, int w, int h, double fovy, double aper, double focal)
     : m_eye(eye), m_look_at(lookAt), m_dir((lookAt - eye).unitize()), m_up(up),
       m_w(w), m_h(h), m_fovy(fovy * Const::PI / 180), m_aperture(aper), m_focal_len((lookAt - eye).mod())
 {
+    if (focal > Const::EPS) m_focal_len = focal;
     m_init();
 }
 
@@ -117,8 +118,6 @@ Json::Value Camera::toJson() const
     camera["w"] = m_w;
     camera["h"] = m_h;
     camera["fovy"] = m_fovy * 180 / Const::PI;
-    camera["aperture"] = m_aperture;
-    camera["focal_len"] = m_focal_len;
     if (m_aperture > 0)
     {
         camera["aperture"] = m_aperture;

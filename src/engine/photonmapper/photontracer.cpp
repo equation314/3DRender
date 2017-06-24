@@ -31,7 +31,7 @@ void PhotonTracer::emitPhotons(int photonNumber)
                 for (; lightPower > 0; lightPower -= deltaPower)
                 {
                     Photon photon = (*l)->emitPhoton(totPower);
-                    m_photonTracing(photon, 1, false);
+                    m_photonTracing(photon, 1);
 
                     lock.lock();
                     if (++tot % 1000 == 0) cout << "Emitted " << tot << " photons." << endl;
@@ -44,7 +44,7 @@ void PhotonTracer::emitPhotons(int photonNumber)
     for (int i = 0; i < threads; i++) threadPool[i].join();
 }
 
-void PhotonTracer::m_photonTracing(Photon& photon, int depth, bool isInternal)
+void PhotonTracer::m_photonTracing(Photon& photon, int depth)
 {
     if (depth > Config::photon_tracing_max_depth) return;
 
@@ -61,7 +61,7 @@ void PhotonTracer::m_photonTracing(Photon& photon, int depth, bool isInternal)
         }
 
         Color cd = material->color * obj->getTextureColor(coll), ct(1, 1, 1);
-        if (isInternal) // 透明材质的颜色过滤
+        if (coll.is_internal) // 透明材质的颜色过滤
         {
             Color absorb = (material->absorb_color * -coll.dist).exp();
             cd *= absorb, ct *= absorb;
@@ -75,21 +75,21 @@ void PhotonTracer::m_photonTracing(Photon& photon, int depth, bool isInternal)
         {
             photon.dir = coll.n.diffuse();
             photon.pow *= cd / cd.power();
-            m_photonTracing(photon, depth + 1, isInternal);
+            m_photonTracing(photon, depth + 1);
         }
         else if (fortune < pd + ps) // 镜面反射
         {
             photon.dir = coll.ray.dir.reflect(coll.n);
             photon.pow *= cd / cd.power();
-            m_photonTracing(photon, depth + 1, isInternal);
+            m_photonTracing(photon, depth + 1);
         }
         else if (fortune < pd + ps + pt) // 透射
         {
             double n = material->rindex;
-            if (isInternal) n = 1 / n;
+            if (coll.is_internal) n = 1 / n;
             photon.dir = coll.ray.dir.refract(coll.n, n);
             photon.pow *= ct / ct.power();
-            m_photonTracing(photon, depth + 1, !isInternal);
+            m_photonTracing(photon, depth + 1);
         }
     }
 }
