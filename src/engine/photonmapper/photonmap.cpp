@@ -1,8 +1,10 @@
+#include "common/config.h"
 #include "common/const.h"
 #include "engine/photonmapper/photonmap.h"
 #include "object/collision.h"
 
 #include <algorithm>
+#include <iostream>
 
 PhotonMap::~PhotonMap()
 {
@@ -13,7 +15,7 @@ PhotonMap::~PhotonMap()
 Color PhotonMap::getIrradiance(const Collision& coll, int samples)
 {
     while (!m_pq.empty()) m_pq.pop();
-    m_pq.push(make_pair(0.1, -1)); // 最大采样半径
+    m_pq.push(std::make_pair(Config::ppm_initial_search_radius, -1)); // 最大采样半径
     m_samples = samples, m_pos = coll.p;
     m_findNearestPhotons(0, m_n);
 
@@ -39,7 +41,7 @@ void PhotonMap::build()
     m_tmp.clear();
     m_plane = new unsigned char[m_n * 2];
 
-    cout << "Total photons: " << m_n << endl;
+    std::cout << "Total photons: " << m_n << std::endl;
     m_build(0, m_n);
 }
 
@@ -52,7 +54,7 @@ void PhotonMap::m_findNearestPhotons(int l, int r)
     if (res < m_pq.top().first)
     {
         if ((int) m_pq.size() == m_samples) m_pq.pop();
-        m_pq.push(make_pair(res, mi));
+        m_pq.push(std::make_pair(res, mi));
     }
 
     if (dist < 0)
@@ -87,7 +89,7 @@ void PhotonMap::m_build(int l, int r)
         k = 2;
     m_plane[mi] = k;
 
-    nth_element(m_photons + l, m_photons + mi, m_photons + r, [&](const Photon& x, const Photon& y) {
+    std::nth_element(m_photons + l, m_photons + mi, m_photons + r, [&](const Photon& x, const Photon& y) {
         return x.pos[k] < y.pos[k];
     });
     m_build(l, mi);

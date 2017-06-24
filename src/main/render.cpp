@@ -2,15 +2,15 @@
 #include "engine/ppm/ppm.h"
 #include "engine/raytracer/raytracer.h"
 
+#include <cstdlib>
 #include <cstring>
 
 void showHelp()
 {
-    printf("Usage: ./render [options] <SCENE_FILE>\n"
+    printf("Usage: ./render [options] <SCENE_FILE> -o <OUTPUT_FILE>\n"
            "Options:\n"
            "  --help                    Display this information.\n"
-           "  -e <engine>               Select the rendering engine. \n"
-           "                            Available engine list:\n"
+           "  -e <engine>               Select the rendering engine. Available engine list:\n"
            "                              0: Ray tracing (default)\n"
            "                              1: Photon mapping\n"
            "                              2: Progressive photon papping\n");
@@ -20,9 +20,11 @@ void showHelp()
 int main(int argc, char* argv[])
 {
     int engineId = 0;
-    string file = "";
+    std::string scenefile = "", outFile = "";
 
-    for (int i = 1; i < argc; i++)
+    if (argc >= 1)
+        scenefile = argv[1];
+    for (int i = 2; i < argc; i++)
     {
         if (!strcmp(argv[i], "-e"))
         {
@@ -34,15 +36,25 @@ int main(int argc, char* argv[])
             else
                 showHelp();
         }
+        else if (!strcmp(argv[i], "-o"))
+        {
+            if (i + 1 < argc)
+            {
+                outFile = argv[i + 1];
+                i++;
+            }
+            else
+                showHelp();
+        }
         else if (!strcmp(argv[i], "--help"))
             showHelp();
-        else
-            file = argv[i];
     }
-    if (!file.length()) showHelp();
+    if (!scenefile.length() || !outFile.length()) showHelp();
+
+    srand(time(0));
 
     Engine* engine;
-    Scene* scene = Scene::loadFrom(file);
+    Scene* scene = Scene::loadFrom(scenefile);
     switch (engineId)
     {
     case 0:
@@ -56,7 +68,7 @@ int main(int argc, char* argv[])
         break;
     }
 
-    engine->run("output.bmp");
+    engine->run(outFile);
 
     if (scene) delete scene;
     delete engine;

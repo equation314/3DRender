@@ -11,6 +11,7 @@
 
 #include <algorithm>
 #include <fstream>
+#include <iostream>
 #include <json/reader.h>
 #include <json/writer.h>
 

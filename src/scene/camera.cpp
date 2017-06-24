@@ -54,9 +54,9 @@ Ray Camera::dofEmit(double x, double y) const
     return Ray(start, focalPoint - start);
 }
 
-std::vector<pair<int, int>> Camera::detectEdge() const
+std::vector<std::pair<int, int>> Camera::detectEdge() const
 {
-    std::vector<pair<int, int>> list;
+    std::vector<std::pair<int, int>> list;
     for (int i = 0; i < m_w; i++)
         for (int j = 0; j < m_h; j++)
         {
@@ -65,10 +65,10 @@ std::vector<pair<int, int>> Camera::detectEdge() const
                   gy = getColor(i + 1, j) - getColor(i, j + 1);
             if (gx.mod2() + gy.mod2() > Config::anti_aliasing_edge_threshold)
             {
-                list.push_back(make_pair(i, j));
-                if (i < m_w - 1 && j < m_h - 1) list.push_back(make_pair(i + 1, j + 1));
-                if (i < m_w - 1) list.push_back(make_pair(i + 1, j));
-                if (j < m_h - 1) list.push_back(make_pair(i, j + 1));
+                list.push_back(std::make_pair(i, j));
+                if (i < m_w - 1 && j < m_h - 1) list.push_back(std::make_pair(i + 1, j + 1));
+                if (i < m_w - 1) list.push_back(std::make_pair(i + 1, j));
+                if (j < m_h - 1) list.push_back(std::make_pair(i, j + 1));
             }
         }
 

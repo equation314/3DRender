@@ -77,7 +77,7 @@ Collision RotationBody::collide(const Ray& ray) const
         {
             double t = -1;
             Vector2 p = m_curves[i].P(u);
-            if (abs(d.z) > Const::EPS)
+            if (std::abs(d.z) > Const::EPS)
                 t = (p.y - o.z) / d.z;
             else
             {
@@ -168,7 +168,7 @@ void RotationBody::m_init()
 {
     for (auto c : m_curves)
     {
-        double r = std::max(abs(c.L), abs(c.R));
+        double r = std::max(std::abs(c.L), std::abs(c.R));
         m_r = std::max(m_r, r), m_h = std::max(m_h, c.U);
         m_sub_cylinders.push_back(new Cylinder(Vector3(m_o.x, m_o.y, m_o.z + c.D), r, c.U - c.D));
         m_identifiers.push_back(Const::randUInt64());

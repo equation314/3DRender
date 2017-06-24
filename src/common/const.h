@@ -3,9 +3,6 @@
 
 #include <cmath>
 #include <cstdlib>
-#include <iostream>
-
-using namespace std;
 
 typedef unsigned long long uint64;
 
@@ -15,11 +12,6 @@ constexpr int HASH_BASE = 31415927;
 
 constexpr double EPS = 1e-6;
 constexpr double PI = acos(-1.0);
-
-inline double randDouble()
-{
-    return 1.0 * rand() / RAND_MAX;
-}
 
 inline int randUInt()
 {
@@ -36,6 +28,15 @@ inline uint64 randUInt64()
     return (rand() << 31) | rand();
 #else
     return (((((rand() << 15) | rand()) << 15) | rand()) << 15) | rand();
+#endif
+}
+
+inline double randDouble()
+{
+#ifdef __linux
+    return 1.0 * rand() / RAND_MAX;
+#else
+    return 1.0 * randUInt() / (1 << 20);
 #endif
 }
 }

@@ -5,11 +5,13 @@
 #include "engine/photonmapper/photontracer.h"
 #include "scene/camera.h"
 
+#include <iostream>
+
 void PhotonMapper::run(const std::string& outFile)
 {
     if (!m_scene) return;
 
-    cout << "Building photon map..." << endl;
+    std::cout << "Building photon map..." << std::endl;
     m_map = new PhotonMap();
     PhotonTracer* tracer = new PhotonTracer(m_scene, m_map);
     tracer->emitPhotons(Config::photon_emitted_number);

@@ -3,6 +3,7 @@
 #include "common/const.h"
 
 #include <cstring>
+#include <iostream>
 
 Bmp::Bmp(int w, int h, const Color& background)
     : m_w(w), m_h(h),

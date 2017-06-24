@@ -37,7 +37,7 @@ public:
     void setColor(int x, int y, const Color& color) { m_color[x][y] = color; }
 
     // 边缘检测
-    std::vector<pair<int, int>> detectEdge() const;
+    std::vector<std::pair<int, int>> detectEdge() const;
 
     // 打印照片到 file 文件
     void print(const std::string& file) const;
