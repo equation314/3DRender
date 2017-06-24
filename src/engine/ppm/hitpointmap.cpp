@@ -3,6 +3,7 @@
 #include "engine/ppm/hitpointmap.h"
 
 #include <algorithm>
+#include <iostream>
 
 HitPointMap::~HitPointMap()
 {
@@ -25,7 +26,7 @@ void HitPointMap::build()
     m_plane = new unsigned char[m_n * 2];
     m_nodes = new Node[m_n * 2];
 
-    cout << "Total hit points: " << m_n << endl;
+    std::cout << "Total hit points: " << m_n << std::endl;
     m_build(0, m_n);
 }
 

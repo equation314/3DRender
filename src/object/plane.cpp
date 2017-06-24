@@ -16,7 +16,7 @@ Plane::Plane(const Json::Value& object)
 Collision Plane::collide(const Ray& ray) const
 {
     double n = m_n.dot(ray.start) + m_d, d = m_n.dot(ray.dir);
-    if (abs(d) < Const::EPS) return Collision();
+    if (std::abs(d) < Const::EPS) return Collision();
     double t = -n / d;
     if (t < Const::EPS) return Collision();
     if (n > Const::EPS)

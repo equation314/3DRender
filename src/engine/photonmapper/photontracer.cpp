@@ -8,6 +8,7 @@
 #include "object/object.h"
 #include "scene/scene.h"
 
+#include <iostream>
 #include <mutex>
 #include <thread>
 
@@ -17,8 +18,8 @@ void PhotonTracer::emitPhotons(int photonNumber)
     for (auto l = m_scene->lightsBegin(); l != m_scene->lightsEnd(); l++)
         totPower += (*l)->getPower();
 
-    mutex lock;
-    int tot = 0, threads = Config::thread_max_number;
+    std::mutex lock;
+    int tot = 0, threads = std::max(Config::thread_max_number, 1);
     std::vector<std::thread> threadPool;
     if (m_photon_map) threads = 1;
     for (int i = 0; i < threads; i++)
@@ -34,7 +35,8 @@ void PhotonTracer::emitPhotons(int photonNumber)
                     m_photonTracing(photon, 1);
 
                     lock.lock();
-                    if (++tot % 1000 == 0) cout << "Emitted " << tot << " photons." << endl;
+                    if (++tot % 10000 == 0)
+                        std::cout << "Emitted " << tot << " photons." << std::endl;
                     lock.unlock();
                 }
             }

@@ -8,11 +8,11 @@ Collision RectLight::collide(const Ray& ray) const
 {
     Vector3 n = m_dx * m_dy;
     double d = n.dot(ray.dir);
-    if (abs(d) < Const::EPS) return Collision();
+    if (std::abs(d) < Const::EPS) return Collision();
     double t = (n.dot(m_o) - n.dot(ray.start)) / d;
     if (t < Const::EPS) return Collision();
     Vector3 p = ray.get(t) - m_o;
-    if (abs(p.dot(m_dx)) + Const::EPS < m_dx.mod2() && abs(p.dot(m_dy)) + Const::EPS < m_dy.mod2())
+    if (std::abs(p.dot(m_dx)) + Const::EPS < m_dx.mod2() && std::abs(p.dot(m_dy)) + Const::EPS < m_dy.mod2())
         return Collision(ray, t, this);
     else
         return Collision();

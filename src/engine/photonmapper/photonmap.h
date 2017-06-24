@@ -28,7 +28,7 @@ private:
     unsigned char* m_plane;
     Photon* m_photons;
     std::vector<Photon> m_tmp;
-    std::priority_queue<pair<double, int>> m_pq;
+    std::priority_queue<std::pair<double, int>> m_pq;
 
     int m_samples; // 最近的光子数
     Vector3 m_pos; // 询问点

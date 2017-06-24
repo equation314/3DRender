@@ -5,6 +5,7 @@
 
 #include <algorithm>
 #include <ctime>
+#include <iostream>
 
 RayTracer::RayTracer(Scene* scene)
     : Engine(scene)
@@ -34,13 +35,13 @@ void RayTracer::run(const std::string& outFile)
 {
     if (!m_scene) return;
 
-    cout << "Ray tracing..." << endl;
+    std::cout << "Ray tracing..." << std::endl;
     clock_t lastRefreshTime = clock();
     for (int i = 0; i < m_w; i++)
     {
         for (int j = 0; j < m_h; j++)
         {
-            if (!j) cout << "column " << i << endl;
+            if (!j) std::cout << "Ray tracing: column " << i << std::endl;
             m_pixel_x = i, m_pixel_y = j;
             m_hash[i][j] = 0;
             m_camera->setColor(i, j, m_DOFSamplingColor(i, j));
@@ -57,12 +58,12 @@ void RayTracer::run(const std::string& outFile)
 
     if (Config::anti_aliasing_samples)
     {
-        cout << "Smoothing..." << endl;
+        std::cout << "Smoothing..." << std::endl;
 
-        std::vector<pair<int, int>> list;
+        std::vector<std::pair<int, int>> list;
         switch (Config::anti_aliasing_edge_detection_mode)
         {
-        case 0:
+        case 0: // 根据不同物体
             for (int i = 0; i < m_w; i++)
                 for (int j = 0; j < m_h; j++)
                 {
@@ -70,21 +71,21 @@ void RayTracer::run(const std::string& outFile)
                     if (i < m_w - 1 && j < m_h - 1)
                         if (m_hash[i][j] != m_hash[i + 1][j + 1] || m_hash[i + 1][j] != m_hash[i][j + 1])
                         {
-                            list.push_back(make_pair(i, j));
-                            list.push_back(make_pair(i + 1, j + 1));
-                            list.push_back(make_pair(i + 1, j));
-                            list.push_back(make_pair(i, j + 1));
+                            list.push_back(std::make_pair(i, j));
+                            list.push_back(std::make_pair(i + 1, j + 1));
+                            list.push_back(std::make_pair(i + 1, j));
+                            list.push_back(std::make_pair(i, j + 1));
                         }
                 }
-            sort(list.begin(), list.end());
-            list.erase(unique(list.begin(), list.end()), list.end());
+            std::sort(list.begin(), list.end());
+            list.erase(std::unique(list.begin(), list.end()), list.end());
             break;
-        case 1:
+        case 1: // 根据相邻像素色差
             list = m_camera->detectEdge();
             break;
-        default:
+        default: // 全图采样
             for (int i = 0; i < m_w; i++)
-                for (int j = 0; j < m_h; j++) list.push_back(make_pair(i, j));
+                for (int j = 0; j < m_h; j++) list.push_back(std::make_pair(i, j));
             break;
         }
 
@@ -92,7 +93,7 @@ void RayTracer::run(const std::string& outFile)
         for (size_t t = 0; t < list.size(); t++)
         {
             if (!t || list[t].first != list[t - 1].first)
-                cout << "column " << list[t].first << endl;
+                std::cout << "Smoothing: column " << list[t].first << std::endl;
 
             m_is_edge[list[t].first][list[t].second] = true;
             m_camera->setColor(list[t].first, list[t].second, m_AASamplingColor(list[t].first, list[t].second));
@@ -126,7 +127,7 @@ Color RayTracer::m_AASamplingColor(int ox, int oy)
     if (!Config::anti_aliasing_samples)
         return m_DOFSamplingColor(ox, oy);
 
-    std::vector<pair<double, double>> points;
+    std::vector<std::pair<double, double>> points;
     int samples = Config::anti_aliasing_samples;
     for (int i = 0; i < samples * 2; i++)
         for (int j = 0; j < samples * 2; j++)
@@ -138,7 +139,7 @@ Color RayTracer::m_AASamplingColor(int ox, int oy)
             double dx = x * cos(a) - y * sin(a),
                    dy = x * sin(a) + y * cos(a);
             if (dx > -0.5 && dx < 0.5 && dy > -0.5 && dy < 0.5)
-                points.push_back(make_pair(ox + dx, oy + dy));
+                points.push_back(std::make_pair(ox + dx, oy + dy));
         }
     Color color;
     for (auto p : points)

@@ -5,6 +5,8 @@
 #include "engine/ppm/ppm.h"
 #include "scene/camera.h"
 
+#include <iostream>
+
 void PPM::run(const std::string& outFile)
 {
     if (!m_scene) return;
@@ -14,11 +16,11 @@ void PPM::run(const std::string& outFile)
     RayTracer::run(outFile);
     m_find_edge = false;
 
-    cout << "Eye tracing..." << endl;
+    std::cout << "Eye tracing..." << std::endl;
     for (int i = 0; i < m_w; i++)
         for (int j = 0; j < m_h; j++)
         {
-            if (!j) cout << "column " << i << endl;
+            if (!j) std::cout << "Eye tracing: column " << i << std::endl;
             m_pixel_x = i, m_pixel_y = j;
             if (m_is_edge[i][j])
                 m_camera->setColor(i, j, m_AASamplingColor(i, j));
@@ -29,11 +31,11 @@ void PPM::run(const std::string& outFile)
     m_map->build();
     Bmp* film = m_camera->copyFilm();
 
-    cout << "Start iteration..." << endl;
+    std::cout << "Start iteration..." << std::endl;
     PhotonTracer* tracer = new PhotonTracer(m_scene, m_map);
     for (int i = 0, tot = 0; i < Config::ppm_iteration_depth; i++)
     {
-        cout << "Round " << i << ":" << endl;
+        std::cout << "Round " << i << ":" << std::endl;
         tracer->emitPhotons(Config::ppm_photon_emitted_number);
         m_map->update();
         tot += Config::ppm_photon_emitted_number;

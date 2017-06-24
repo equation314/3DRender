@@ -22,10 +22,10 @@ Collision Cylinder::collide(const Ray& ray) const
     bool in = m_o.z < ray.start.z + Const::EPS && ray.start.z < m_o.z + m_h + Const::EPS && oc.mod2() < m_r * m_r + Const::EPS;
 
     // 与两个底面求交
-    if (abs(d3.z) > -Const::EPS)
+    if (std::abs(d3.z) > -Const::EPS)
     {
         double t1 = (m_o.z - ray.start.z) / d3.z, t2 = (m_o.z + m_h - ray.start.z) / d3.z, u1 = 0, u2 = 1;
-        if (t1 > t2) swap(t1, t2), swap(u1, u2);
+        if (t1 > t2) std::swap(t1, t2), std::swap(u1, u2);
         if (t1 > Const::EPS) // 若射线和第一个底面相交，直接返回
         {
             Vector3 p = uray.get(t1);

@@ -7,7 +7,7 @@ Vector3::Vector3(const Json::Value& vec)
 {
     if (vec.isString())
     {
-        string s = vec.asString();
+        std::string s = vec.asString();
         sscanf(s.c_str(), "(%lf,%lf,%lf)", &x, &y, &z);
     }
 }
