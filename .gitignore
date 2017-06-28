@@ -1,5 +1,6 @@
 [Bb]uild/
 tests/
+report/
 .vscode
 
 # Compiled Object files

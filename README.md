@@ -27,7 +27,7 @@ Available engine list:
 
 ## Some Results
 
-![cornell_box](results/cornell_box.png "Cornell box")
+![cornell_box](results/cornell_box_ppm.png "Cornell box")
 
 ![ball_pyramid_glass](results/ball_pyramid_glass.png "Ball pyramid and a glass with liquid")
 
