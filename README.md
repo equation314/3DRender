@@ -23,7 +23,7 @@ Available engine list:
 
 0. Ray tracing (default)
 1. Photon mapping
-2. Progressive photon papping
+2. Progressive photon mapping
 
 ## Some Results
 

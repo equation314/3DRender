@@ -13,7 +13,7 @@ void showHelp()
            "  -e <engine>               Select the rendering engine. Available engine list:\n"
            "                              0: Ray tracing (default)\n"
            "                              1: Photon mapping\n"
-           "                              2: Progressive photon papping\n");
+           "                              2: Progressive photon mapping\n");
     exit(0);
 }
 
