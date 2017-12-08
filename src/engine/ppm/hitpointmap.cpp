@@ -87,12 +87,12 @@ void HitPointMap::m_build(int l, int r)
         k = 1;
     else
         k = 2;
-    m_plane[mi] = k, m_nodes[mi] = Node(&m_points[mi]);
 
     nth_element(m_points.begin() + l, m_points.begin() + mi, m_points.begin() + r, [&](const HitPoint& x, const HitPoint& y) {
         return x.pos[k] < y.pos[k];
     });
 
+    m_plane[mi] = k, m_nodes[mi] = Node(&m_points[mi]);
     if (l < mi)
     {
         m_build(l, mi);
