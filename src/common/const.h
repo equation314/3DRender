@@ -34,11 +34,11 @@ inline uint64 randUInt64()
 inline double randDouble()
 {
 #ifdef _WIN32
-    return 1.0 * randUInt() / (1 << 20);
+    return 1.0 * randUInt() / (1 << 30);
 #else
     return 1.0 * rand() / RAND_MAX;
 #endif
 }
-}
+} // namespace Const
 
 #endif // CONST_H
